@@ -1,0 +1,30 @@
+.sidebar {
+  min-height: calc(100vh - 75px);
+  width: 170px;
+  box-shadow: 0px 5px 5px rgb(0 0 0 / 50%);
+  z-index: 1;
+  position: relative;
+  &__menu {
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &--item {
+      display: flex;
+      padding: 10px 20px;
+      // border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      align-items: center;
+      justify-content: space-between;
+      // box-shadow: 1px 0 2px rgba(0, 0, 0, 0.25);
+      img {
+        width: 12px;
+        margin-top: 3px;
+      }
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+}

@@ -1,0 +1,170 @@
+<div class="page">
+  <div class="pg-documentadd">
+    <h2 *ngIf="estadoSalvar == 'post'">Adicionar um Documento</h2>
+    <h2 *ngIf="estadoSalvar == 'put'">Editar Documento</h2>
+    <div class="card rounded shadow-sm">
+      <form [formGroup]="form">
+        <div class="p-3">
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>Autor(es)</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Digite o(s) nomes dos Autor(es)"
+                [ngClass]="{
+                  'is-invalid': f.autor.errors && f.autor.touched
+                }"
+                formControlName="autor"
+              />
+              <div class="invalid-feedback">Campo Obrigatório</div>
+              <div class="invalid-feedback">Mínimo de 4 Caracteres</div>
+              <div class="invalid-feedback">Máximo de 50 Caracteres</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <label>Título</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Digite o Título"
+                formControlName="titulo"
+                [ngClass]="{
+                  'is-invalid': f.titulo.errors && f.titulo.touched
+                }"
+              />
+              <div class="invalid-feedback">Campo Obrigatório</div>
+              <div class="invalid-feedback">Mínimo de 4 Caracteres</div>
+              <div class="invalid-feedback">Máximo de 70 Caracteres</div>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Área</label>
+              <input
+                type="datetime"
+                class="form-control"
+                placeholder="Digite a Área"
+                formControlName="area"
+                [ngClass]="{
+                  'is-invalid': f.area.errors && f.area.touched
+                }"
+              />
+              <div class="invalid-feedback">Campo Obrigatório</div>
+              <div class="invalid-feedback">Mínimo de 4 Caracteres</div>
+              <div class="invalid-feedback">Máximo de 50 Caracteres</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-2">
+              <label>Categoria</label>
+              <select
+                formControlName="categoria"
+                [ngClass]="{
+                  'is-invalid': f.categoria.errors && f.categoria.touched
+                }"
+                class="form-control"
+              >
+                <option value="0">Resumo</option>
+                <option value="1">Artigo</option>
+                <option value="2">Monografia</option>
+                <option value="3">Dissertacao</option>
+                <option value="4">Tese</option>
+                <option value="5">Projeto</option>
+                <option value="6">Livro</option>
+              </select>
+              <div class="invalid-feedback">Campo Obrigatório</div>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Palavras-Chave</label>
+              <input
+                type="text"
+                formControlName="palavrasChave"
+                class="form-control"
+                placeholder=""
+              />
+              <div class="invalid-feedback">Campo Obrigatório</div>
+            </div>
+            <div class="form-group col-md-2">
+              <label>Ano de Publicação</label>
+              <input
+                type="text"
+                formControlName="ano"
+                class="form-control"
+                placeholder=""
+              />
+              <div class="invalid-feedback">Campo Obrigatório</div>
+            </div>
+            <div *ngIf="estadoSalvar == 'post'" class="form-group col-md-4">
+              <label>Upload do Documento</label>
+              <input
+                type="file"
+                #file
+                class="form-control"
+                formControlName="documentoURL"
+                placeholder=""
+              />
+            </div>
+            <div *ngIf="mostrar" class="form-group col-md-4">
+              <label>Documento</label>
+              <input
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="documentoURL"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>Resumo</label>
+              <textarea
+                formControlName="resumo"
+                class="form-control"
+                aria-label="With textarea"
+              ></textarea>
+              <div class="invalid-feedback">Campo Obrigatório</div>
+            </div>
+          </div>
+          <div class="d-flex">
+            <button
+              *ngIf="estadoSalvar == 'put'"
+              (click)="setChange()"
+              class="btn btn-info"
+            >
+              Alterar Documento
+            </button>
+            <div *ngIf="change" class="col-md-4">
+              <input
+                type="file"
+                #file
+                formControlName="documentoURL"
+                placeholder=""
+                (change)="onFileChange($event)"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="d-flex">
+            <button
+              class="btn btn-outline-secondary mr-auto border"
+              (click)="resetForm()"
+            >
+              Cancelar Alteração
+            </button>
+            <button
+              class="btn btn-success"
+              [disabled]="!form.valid"
+              (click)="salvarAlteracao()"
+            >
+              Salvar Documento
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- (change)="onFileChange($event)" -->
+</div>

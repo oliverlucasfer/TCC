@@ -1,0 +1,68 @@
+.pg-home {
+  background: url('../../../assets/images/book-wall-antiga.jpg') !important;
+  min-height: calc(100vh - 75px);
+  display: flex;
+  align-items: end;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 0;
+  &:before{
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: ' ';
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(255,255,255);
+    background: linear-gradient(90deg, rgba(255,255,255,1) 13%, rgba(255,255,255,0.7749474789915967) 50%, rgba(0,0,0,0.018644957983193322) 100%);
+  }
+  &__title {
+    color: #101010;
+    font-size: 50px;
+    text-align: end;
+    font-weight: bold;
+    z-index: 2;
+  }
+  &__subtitle {
+    color: #101010;
+    font-size: 50px;
+    text-align: end;
+    font-weight: bold;
+    z-index: 2;
+  }
+  &__action{
+    z-index: 2;
+  }
+  &__button {
+    padding: 20px 60px;
+    border: none;
+    border-radius: 15px;
+    margin-top: 25px;
+    margin-left: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    box-shadow: 0 0 10px rgba(0, 0, 0,0.2);
+    z-index: 2;
+    &--search {
+      background-color: #fff;
+      color: #202020;
+      z-index: 2;
+      &:hover {
+        background: #202020;
+        color: #fff;
+      }
+    }
+    &--login {
+      background: #202020;
+      color: #fff;
+      z-index: 2;
+      &:hover {
+        background-color: #fff;
+        color: #202020;
+      }
+    }
+  }
+}

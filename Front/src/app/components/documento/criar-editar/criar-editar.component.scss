@@ -1,0 +1,93 @@
+.pg-documentadd {
+  h2 {
+    margin-bottom: 50px;
+  }
+  &__info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    &--label {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    &--input {
+      margin-bottom: 20px;
+      background-color: #f4f4f8;
+      box-shadow: 0 0 4px black;
+      border: none;
+      height: 50px;
+      border-radius: 10px;
+      padding: 0 20px;
+      min-width: 100%;
+      &:focus {
+        border: none;
+      }
+    }
+    &--textarea {
+      min-width: 100%;
+      min-height: 250px;
+      margin-bottom: 20px;
+      background-color: #f4f4f8;
+      box-shadow: 0 0 4px black;
+      border: none;
+      border-radius: 10px;
+      padding: 20px;
+      resize: none;
+      &:focus {
+        border: none;
+      }
+    }
+  }
+  &__button {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    &--save {
+      padding: 20px 40px;
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      border: none;
+      font-weight: bold;
+      border-radius: 20px;
+      background-color: #4249ff;
+      transition: background-color 0.2s;
+      cursor: pointer;
+      color: #ffffff;
+      &:hover {
+        background-color: #1b31ff;
+      }
+    }
+    &--delete {
+      padding: 20px 40px;
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      border: none;
+      font-weight: bold;
+      border-radius: 20px;
+      background-color: #ff3535;
+      transition: background-color 0.2s;
+      cursor: pointer;
+      color: #ffffff;
+      &:hover {
+        background-color: #bf1010;
+      }
+    }
+    &--cancel {
+      padding: 20px 40px;
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      background-color: #fff;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: #d9d9d9;
+      }
+    }
+  }
+}
+
+.pg-documentadd-line-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+}

@@ -1,0 +1,91 @@
+<div class="page">
+  <div class="pg-busca__header">
+    <h1>Documentos</h1>
+    <button (click)="redirectTo()" class="btn-edit">
+      <strong class="btn-edit__name">Cadastrar Novo</strong>
+      <img class="btn-edit__icon" src="../../assets/icons/edit.svg" alt="" />
+    </button>
+  </div>
+  <div class="pg-busca__search">
+    <div class="pg-busca__search--icon">
+      <img src="../../assets/icons/search.svg" alt="" />
+    </div>
+    <input
+      class="pg-busca__search--input"
+      type="text"
+      placeholder="Buscar"
+      (input)="filtarDocumentos($event.target)"
+    />
+  </div>
+  <div class="card mt-5 rounded shadow-sm">
+    <table class="table table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>Título</th>
+          <th>Autor(es)</th>
+          <th>Área</th>
+          <th>Categoria</th>
+          <th>Opções</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="documentos && documentos.length">
+        <tr *ngFor="let documento of documentos">
+          <td>{{ documento.titulo }}</td>
+          <td>{{ documento.autor }}</td>
+          <td>{{ documento.area }}</td>
+          <td>{{ categorias[documento.categoria] }}</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-info btn-sm mr-2"
+              (click)="info(documento.id)"
+            >
+              <i class="fa-solid fa-circle-info"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger btn-sm mr-2"
+              (click)="openModal($event, template, documento.id)"
+            >
+              <i class="fa fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot *ngIf="!documentos.length">
+        <tr>
+          <td colspan="8" class="text-center">
+            <h4>Nenhum documento encontrado!</h4>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="d-flex justify-content-center">
+      <pagination
+        [boundaryLinks]="true"
+        [totalItems]="pagination.totalItems"
+        [itemsPerPage]="pagination.itemsPerPage"
+        [(ngModel)]="pagination.currentPage"
+        (pageChanged)="pageChanged($event)"
+        pageBtnClass="btn"
+        previousText="&lsaquo;"
+        nextText="&rsaquo;"
+        firstText="&laquo;"
+        lastText="&raquo;"
+      >
+      </pagination>
+    </div>
+  </div>
+
+  <ng-template #template>
+    <div class="modal-body text-center">
+      <p>Tem certeza que quer Excluir esse Documento?</p>
+      <button type="button" class="btn btn-primary" (click)="confirm()">
+        Sim
+      </button>
+      <button type="button" class="btn btn-danger" (click)="decline()">
+        Não
+      </button>
+    </div>
+  </ng-template>
+</div>

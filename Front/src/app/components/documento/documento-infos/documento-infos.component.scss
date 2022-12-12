@@ -1,0 +1,81 @@
+.pg-document {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    div {
+      display: flex;
+    }
+    h1 {
+      margin-left: 20px;
+    }
+    .btn-edit {
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      justify-content: space-between;
+      transition: background-color 0.2s;
+      margin-bottom: -9px;
+      &__name {
+        font-size: 14px;
+        margin-right: 10px;
+      }
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+      img {
+        margin-bottom: 5px;
+      }
+    }
+  }
+  &__container {
+    display: flex;
+    width: 100%;
+    background: white;
+  }
+  &__info {
+    width: 50%;
+    padding: 30px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+    &--label {
+      font-weight: bold;
+    }
+    &--data {
+      margin: 15px 15px 10px 10px;
+    }
+    &--button {
+      height: 75px;
+      width: 230px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      background-color: #ff3535;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+      cursor: pointer;
+      img {
+        margin-left: 20px;
+      }
+      &:hover {
+        background-color: #bf1010;
+      }
+    }
+  }
+  &__resume {
+    padding: 30px;
+    width: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+    h2 {
+      margin-bottom: 20px;
+    }
+  }
+}
