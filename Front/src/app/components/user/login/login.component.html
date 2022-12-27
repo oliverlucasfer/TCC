@@ -1,38 +1,41 @@
-<div class="d-flex vh-70">
-  <div class="mx-auto text-center shadow-sm bg-white rounded p-5 my-5">
-    <form #loginForm="ngForm" class="form-signin" (ngSubmit)="login()">
-      <i class="fa fa-users mb-2"></i>
-      <h1 class="h3 mb-3 font-weight-normal">Entrar com</h1>
-      <label for="username" class="sr-only">Usuário</label>
-      <input
-        [(ngModel)]="model.userName"
-        type="email"
-        id="username"
-        class="form-control"
-        placeholder="Usuário"
-        name="username"
-        required
-      />
-      <label for="password" class="sr-only">Password</label>
-      <input
-        [(ngModel)]="model.password"
-        type="password"
-        id="password"
-        class="form-control"
-        placeholder="Senha"
-        name="password"
-        required
-      />
-      <button
-        [disabled]="loginForm.invalid"
-        class="btn btn-lg btn-primary btn-block"
-        type="submit"
-      >
-        Entrar
-      </button>
-      <a class="btn btn-lg btn-link btn-block" routerLink="/user/registration"
-        >Ou Cadastre-se</a
-      >
+<div>
+  <div>
+    <form #loginForm="ngForm" (ngSubmit)="login()">
+      <div class="pg-login">
+        <img class="pg-login__img" src="../../../../assets/icons/user.svg" alt="" />
+        <h2 class="pg-login__text">Entrar com</h2>
+        <label for="username" class="sr-only">Usuário</label>
+        <input
+          [(ngModel)]="model.userName"
+          type="email"
+          id="username"
+          class="pg-login__input"
+          placeholder="Usuário"
+          name="username"
+          required
+        />
+        <label for="password" class="sr-only">Password</label>
+        <input
+          [(ngModel)]="model.password"
+          type="password"
+          id="password"
+          class="pg-login__input"
+          placeholder="Senha"
+          name="password"
+          required
+        />
+        <button
+          [disabled]="loginForm.invalid"
+          class="pg-login__button btn btn-lg btn-primary btn-block"
+          type="submit"
+        >
+          Entrar
+        </button>
+        <p class="pg-login__text">ou <a class="pg-login__link" routerLink="/user/registration"
+            >Ou Cadastre-se</a
+          >
+        </p>
+      </div>
     </form>
   </div>
 </div>

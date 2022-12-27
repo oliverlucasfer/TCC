@@ -1,15 +1,11 @@
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentoService } from 'src/app/services/documento.service';
-import { Documento } from 'src/app/models/Documento';
+import { areas, Documento } from 'src/app/models/Documento';
 import { environment } from 'src/environments/environment';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-criar-editar',
@@ -25,6 +21,8 @@ export class CriarEditarComponent implements OnInit {
   file!: File;
   mostrar = false;
   change = false;
+  modalRef?: BsModalRef;
+  areas = areas;
 
   get f(): any {
     return this.form.controls;
@@ -34,7 +32,8 @@ export class CriarEditarComponent implements OnInit {
     private fb: FormBuilder,
     private activatedRouter: ActivatedRoute,
     private router: Router,
-    private documentoService: DocumentoService
+    private documentoService: DocumentoService,
+    private modalService: BsModalService
   ) {}
 
   ngOnInit(): void {
@@ -89,14 +88,7 @@ export class CriarEditarComponent implements OnInit {
           Validators.maxLength(70),
         ],
       ],
-      area: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(50),
-        ],
-      ],
+      area: ['', [Validators.required]],
       categoria: ['', Validators.required],
       palavrasChave: ['', Validators.required],
       resumo: ['', Validators.required],
@@ -109,24 +101,34 @@ export class CriarEditarComponent implements OnInit {
     this.form.reset();
   }
 
-  public salvarAlteracao(): void {
+  public salvarAlteracao(event: any, template: TemplateRef<any>): void {
     if (this.estadoSalvar == 'post') {
       this.documento = { ...this.form.value };
       this.documentoService.postDocumento(this.documento).subscribe(
         () => {
-          this.router.navigate(['lista']);
+          event.stopPropagation();
+          this.modalRef = this.modalService.show(template, {
+            class: 'modal-sm',
+          });
         },
         (error: any) => {
           console.error(error);
         }
       );
     } else {
-      this.documento = { id: this.documento.id, ...this.form.value };
+      this.documento = {
+        id: this.documento.id,
+        documentoText: this.documento.documentoText,
+        ...this.form.value,
+      };
       this.documentoService
         .putDocumento(this.documento.id, this.documento)
         .subscribe(
           () => {
-            this.router.navigate(['lista']);
+            event.stopPropagation();
+            this.modalRef = this.modalService.show(template, {
+              class: 'modal-sm',
+            });
           },
           (error: any) => {
             console.error(error);
@@ -137,25 +139,53 @@ export class CriarEditarComponent implements OnInit {
 
   onFileChange(ev: any): void {
     const reader = new FileReader();
+    if (this.estadoSalvar == 'post') {
+      this.documentoService.getDocumento().subscribe((d) => {
+        reader.onload = (event: any) =>
+          (this.documentoURL = event.target.result);
 
-    reader.onload = (event: any) => (this.documentoURL = event.target.result);
+        this.file = ev.target.files;
+        reader.readAsDataURL(this.file[0]);
 
-    this.file = ev.target.files;
-    reader.readAsDataURL(this.file[0]);
+        this.uploadDocumento(d.id);
+      });
+    } else {
+      reader.onload = (event: any) => (this.documentoURL = event.target.result);
 
-    this.uploadDocumento();
+      this.file = ev.target.files;
+      reader.readAsDataURL(this.file[0]);
+
+      this.uploadDocumento();
+    }
   }
 
-  uploadDocumento(): void {
+  uploadDocumento(id?: number): void {
+    if (this.estadoSalvar == 'post') {
+      this.documentoId = id;
+    }
     this.documentoService.postUpload(this.documentoId, this.file).subscribe(
       () => {
         this.carregarDocumento();
-
+        this.modalRef?.hide();
         this.router.navigate(['lista']);
       },
       (error: any) => {
         console.error(error);
       }
+    );
+  }
+
+  close() {
+    this.modalRef?.hide();
+    this.router.navigate(['lista']);
+  }
+
+  excluir() {
+    this.documentoService.deleteDocumento(this.documentoId).subscribe(
+      (result: any) => {
+        this.router.navigate(['lista']);
+      },
+      (error) => console.log(error)
     );
   }
 }

@@ -4,6 +4,7 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/identity/User';
+import { UserUpdate } from '../models/identity/UserUpdate';
 
 @Injectable({
   providedIn: 'root',
@@ -49,5 +50,18 @@ export class AccountService {
   public setCurrentUser(user: User): void {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
+  }
+
+  getUser() {
+    return this.http.get<UserUpdate[]>(this.baseUrl + 'GetUser', ).pipe(take(1));
+  }
+
+  updateUser(model: UserUpdate): Observable<void> {
+    return this.http.put<UserUpdate>(this.baseUrl + 'updateUser', model).pipe(
+      take(1),
+      map((user: UserUpdate) => {
+        this.setCurrentUser(user);
+      })
+    );
   }
 }

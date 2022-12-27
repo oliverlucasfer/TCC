@@ -2,15 +2,30 @@
   <div class="pg-documentadd">
     <h2 *ngIf="estadoSalvar == 'post'">Adicionar um Documento</h2>
     <h2 *ngIf="estadoSalvar == 'put'">Editar Documento</h2>
-    <div class="card rounded shadow-sm">
+    <div>
       <form [formGroup]="form">
         <div class="p-3">
           <div class="form-row">
-            <div class="form-group col-md-12">
-              <label>Autor(es)</label>
+            <div class="form-group col-md-6">
+              <label class="pg-documentadd__info--label">Título</label>
               <input
                 type="text"
-                class="form-control"
+                class="pg-documentadd__info--input form-control"
+                placeholder="Digite o Título"
+                formControlName="titulo"
+                [ngClass]="{
+                  'is-invalid': f.titulo.errors && f.titulo.touched
+                }"
+              />
+              <div class="invalid-feedback">Campo Obrigatório</div>
+              <div class="invalid-feedback">Mínimo de 4 Caracteres</div>
+              <div class="invalid-feedback">Máximo de 70 Caracteres</div>
+            </div>
+            <div class="form-group col-md-6">
+              <label class="pg-documentadd__info--label">Autor(es)</label>
+              <input
+                type="text"
+                class="pg-documentadd__info--input form-control"
                 placeholder="Digite o(s) nomes dos Autor(es)"
                 [ngClass]="{
                   'is-invalid': f.autor.errors && f.autor.touched
@@ -23,46 +38,33 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group col-md-8">
-              <label>Título</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Digite o Título"
-                formControlName="titulo"
-                [ngClass]="{
-                  'is-invalid': f.titulo.errors && f.titulo.touched
-                }"
-              />
-              <div class="invalid-feedback">Campo Obrigatório</div>
-              <div class="invalid-feedback">Mínimo de 4 Caracteres</div>
-              <div class="invalid-feedback">Máximo de 70 Caracteres</div>
-            </div>
-            <div class="form-group col-md-4">
-              <label>Área</label>
-              <input
-                type="datetime"
-                class="form-control"
-                placeholder="Digite a Área"
+            <div class="form-group col-md-6">
+              <label class="pg-documentadd__info--label">Área</label>
+              <select
                 formControlName="area"
                 [ngClass]="{
                   'is-invalid': f.area.errors && f.area.touched
                 }"
-              />
+                class="pg-documentadd__info--input form-control"
+              >
+                <option value="0">Engenharia</option>
+                <option value="1">Saúde</option>
+                <option value="2">Direito</option>
+                <option value="3">Robótica</option>
+                <option value="4">Administração</option>
+                <option value="5">Contabilidade</option>
+                <option value="6">Desenvolvimento</option>
+              </select>
               <div class="invalid-feedback">Campo Obrigatório</div>
-              <div class="invalid-feedback">Mínimo de 4 Caracteres</div>
-              <div class="invalid-feedback">Máximo de 50 Caracteres</div>
             </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group col-md-2">
-              <label>Categoria</label>
+            <div class="form-group col-md-6">
+              <label class="pg-documentadd__info--label">Categoria</label>
               <select
                 formControlName="categoria"
                 [ngClass]="{
                   'is-invalid': f.categoria.errors && f.categoria.touched
                 }"
-                class="form-control"
+                class="pg-documentadd__info--input form-control"
               >
                 <option value="0">Resumo</option>
                 <option value="1">Artigo</option>
@@ -74,89 +76,73 @@
               </select>
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
-            <div class="form-group col-md-4">
-              <label>Palavras-Chave</label>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label class="pg-documentadd__info--label">Palavras-Chave</label>
               <input
                 type="text"
                 formControlName="palavrasChave"
-                class="form-control"
+                class="pg-documentadd__info--input form-control"
                 placeholder=""
               />
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
-            <div class="form-group col-md-2">
-              <label>Ano de Publicação</label>
+            <div class="form-group col-md-6">
+              <label class="pg-documentadd__info--label"
+                >Ano de Publicação</label
+              >
               <input
                 type="text"
                 formControlName="ano"
-                class="form-control"
+                class="pg-documentadd__info--input form-control"
                 placeholder=""
               />
               <div class="invalid-feedback">Campo Obrigatório</div>
-            </div>
-            <div *ngIf="estadoSalvar == 'post'" class="form-group col-md-4">
-              <label>Upload do Documento</label>
-              <input
-                type="file"
-                #file
-                class="form-control"
-                formControlName="documentoURL"
-                placeholder=""
-              />
-            </div>
-            <div *ngIf="mostrar" class="form-group col-md-4">
-              <label>Documento</label>
-              <input
-                readonly
-                type="text"
-                class="form-control"
-                formControlName="documentoURL"
-              />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-12">
-              <label>Resumo</label>
+              <label class="pg-documentadd__info--label">Resumo</label>
               <textarea
                 formControlName="resumo"
-                class="form-control"
+                class="pg-documentadd__info--textarea form-control"
                 aria-label="With textarea"
               ></textarea>
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
           </div>
-          <div class="d-flex">
-            <button
-              *ngIf="estadoSalvar == 'put'"
-              (click)="setChange()"
-              class="btn btn-info"
-            >
-              Alterar Documento
-            </button>
-            <div *ngIf="change" class="col-md-4">
+          <div class="form-row">
+            <div *ngIf="mostrar" class="form-group col-md-7">
+              <label class="pg-documentadd__info--label">Documento</label>
               <input
-                type="file"
-                #file
+                readonly
+                type="text"
+                class="pg-documentadd__info--input form-control"
                 formControlName="documentoURL"
-                placeholder=""
-                (change)="onFileChange($event)"
               />
             </div>
           </div>
         </div>
-
-        <div class="card-footer">
-          <div class="d-flex">
+        <div>
+          <div class="pg-documentadd__button">
             <button
-              class="btn btn-outline-secondary mr-auto border"
+              class="pg-documentadd__button--cancel btn btn-outline-secondary border"
               (click)="resetForm()"
             >
               Cancelar Alteração
             </button>
             <button
-              class="btn btn-success"
+              ng
+              class="pg-documentadd__button--delete btn"
+              (click)="excluir()"
+            >
+              Excluir
+            </button>
+            <button
+              class="pg-documentadd__button--save btn btn-success"
               [disabled]="!form.valid"
-              (click)="salvarAlteracao()"
+              (click)="salvarAlteracao($event, template)"
             >
               Salvar Documento
             </button>
@@ -165,6 +151,33 @@
       </form>
     </div>
   </div>
-
-  <!-- (change)="onFileChange($event)" -->
+  <ng-template #template>
+    <div *ngIf="estadoSalvar == 'post'" class="col-md-4">
+      <div class="modal-upload">
+        <label class="modal-upload__label">Upload do Documento</label>
+        <input
+          type="file"
+          #file
+          class="modal-upload__input form-control"
+          formControlName="documentoURL"
+          placeholder=""
+          (change)="onFileChange($event)"
+        />
+      </div>
+    </div>
+    <div *ngIf="estadoSalvar == 'put'">
+      <div class="modal-upload">
+        <label class="modal-upload__label">Deseja Alterar o PDF?</label>
+        <input
+          type="file"
+          #file
+          formControlName="documentoURL"
+          class="modal-upload__input form-control"
+          placeholder=""
+          (change)="onFileChange($event)"
+        />
+        <button class="modal-upload__button" (click)="close()">Não</button>
+      </div>
+    </div>
+  </ng-template>
 </div>

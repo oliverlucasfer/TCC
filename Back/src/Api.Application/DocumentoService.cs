@@ -21,7 +21,7 @@ namespace Api.Application
             _geralPersistence = geralPersistence;
             _mapper = mapper;
         }
-        public async Task<DocumentoDto> AddDocumento( DocumentoDto model)
+        public async Task<DocumentoDto> AddDocumento(DocumentoDto model)
         {
             try
             {

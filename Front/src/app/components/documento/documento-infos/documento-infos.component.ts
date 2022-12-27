@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { categorias, Documento } from 'src/app/models/Documento';
+import { areas, categorias, Documento } from 'src/app/models/Documento';
+import { AccountService } from 'src/app/services/account.service';
 import { DocumentoService } from 'src/app/services/documento.service';
-import { DownloadService } from 'src/app/services/download.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-documento-infos',
@@ -15,16 +14,26 @@ export class DocumentoInfosComponent implements OnInit {
   documentoId!: number;
   documentoURL!: string;
   categorias = categorias;
+  areas = areas;
+  tipo: any;
 
   constructor(
     private activatedRouter: ActivatedRoute,
     private documentoService: DocumentoService,
-    private service: DownloadService,
+    private accountService: AccountService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.carregarDocumento();
+    this.accountService.getUser().subscribe((u) => {
+      var user = JSON.parse(localStorage.getItem('user'));
+      for (let index = 0; index < u.length; index++) {
+        if (user.userName == u[index].userName) {
+          this.tipo = u[index].tipo;
+        }
+      }
+    });
   }
 
   public carregarDocumento() {
@@ -35,10 +44,7 @@ export class DocumentoInfosComponent implements OnInit {
         (documento: Documento) => {
           this.documento = documento;
           if (this.documento.documentoURL !== '') {
-            this.documentoURL =
-              // environment.apiURL +
-              // 'resources/pdfs/' +
-              this.documento.documentoURL;
+            this.documentoURL = this.documento.documentoURL;
           }
         },
         (error: any) => {
@@ -50,17 +56,5 @@ export class DocumentoInfosComponent implements OnInit {
 
   redirectTo(id: number) {
     this.router.navigate([`documento/editar/${id}`]);
-  }
-
-  download() {
-    this.service.downloadPdf(this.documentoURL).subscribe((res) => {
-      let url = this.documentoURL;
-      let a = document.createElement('a');
-      a.href = url;
-      a.download = this.documentoURL;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
-    });
   }
 }

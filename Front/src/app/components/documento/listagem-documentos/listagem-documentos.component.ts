@@ -1,11 +1,14 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Documento, categorias } from 'src/app/models/Documento';
+import { Documento, categorias, areas } from 'src/app/models/Documento';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { PaginatedResult, Pagination } from 'src/app/models/Pagination';
+import { EmitterService } from 'src/app/services/emitter.service';
+import * as _ from 'lodash';
+import { AccountService } from 'src/app/services/account.service';
 
 @Component({
   selector: 'app-listagem-documentos',
@@ -19,18 +22,34 @@ export class ListagemDocumentosComponent implements OnInit {
   public documentoId = 0;
   public pagination = {} as Pagination;
   public url: any;
+  tipo: any;
+  areas = areas;
   termoBuscaChanged: Subject<string> = new Subject<string>();
 
   constructor(
     private documentoService: DocumentoService,
+    private accountService: AccountService,
     private modalService: BsModalService,
     private router: Router,
-    private route: ActivatedRoute
+    private emitter: EmitterService
   ) {}
 
   ngOnInit(): void {
+    this.accountService.getUser().subscribe((u) => {
+      var user = JSON.parse(localStorage.getItem('user'));
+      for (let index = 0; index < u.length; index++) {
+        if (user.userName == u[index].userName) {
+          this.tipo = u[index].tipo;
+        }
+      }
+    });
+    this.emitter.categoria.subscribe((value: number) => {
+      this.carregarDocumentos(value);
+    });
     this.url = this.router.url;
-    this.carregarDocumentos();
+    if (this.url == '/lista') {
+      this.carregarDocumentos();
+    }
     this.pagination = {
       currentPage: 1,
       itemsPerPage: 3,
@@ -38,26 +57,9 @@ export class ListagemDocumentosComponent implements OnInit {
     } as Pagination;
   }
 
-  openModal(event: any, template: TemplateRef<any>, documentoId: number) {
+  openModal(event: any, template: TemplateRef<any>) {
     event.stopPropagation();
-    this.documentoId = documentoId;
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
-  }
-
-  confirm(): void {
-    this.modalRef?.hide();
-    this.documentoService.deleteDocumento(this.documentoId).subscribe(
-      (result: any) => {
-        if (result.message == 'Deletado') {
-          this.carregarDocumentos();
-        }
-      },
-      (error) => console.log(error)
-    );
-  }
-
-  decline(): void {
-    this.modalRef?.hide();
   }
 
   public pageChanged(event): void {
@@ -90,7 +92,7 @@ export class ListagemDocumentosComponent implements OnInit {
     this.termoBuscaChanged.next(event.value);
   }
 
-  public carregarDocumentos(): void {
+  public carregarDocumentos(categoria?: number): void {
     if (this.url == '/lista') {
       this.documentoService
         .getDocumentos(
@@ -107,14 +109,13 @@ export class ListagemDocumentosComponent implements OnInit {
           }
         );
     } else {
-      var categoria = +this.route.snapshot.paramMap.get('categoria');
-      console.log(this.router.url)
+      var cat = categoria;
       this.documentoService
         .getDocumentos(
           this.pagination.currentPage,
           this.pagination.itemsPerPage,
           '',
-          categoria
+          cat
         )
         .subscribe(
           (paginatedResult: PaginatedResult<Documento[]>) => {
@@ -134,5 +135,29 @@ export class ListagemDocumentosComponent implements OnInit {
 
   redirectTo() {
     this.router.navigate(['document/novo']);
+  }
+
+  limpar() {
+    if (this.router.url == '/lista') {
+      window.location.reload();
+    } else {
+      this.router.navigate(['/lista']);
+    }
+    this.modalRef?.hide();
+  }
+
+  date(valor: string) {
+    // this.ano = valor;
+  }
+
+  area(valor: string) {
+    // this._area = valor;
+  }
+
+  aplicar() {
+    // this.documentoService.getFiltro().subscribe(d => {
+    //   this.documentos = d
+    // });
+    // this.modalRef?.hide();
   }
 }

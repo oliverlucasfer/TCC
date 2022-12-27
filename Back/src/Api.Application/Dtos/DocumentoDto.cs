@@ -13,6 +13,7 @@ namespace Api.Aplication.Dtos
         public string PalavrasChave { get; set; }
         public string Resumo { get; set; }
         public string DocumentoURL { get; set; }
+        public string DocumentoText { get; set; }
         public string Ano { get; set; }
     }
 }

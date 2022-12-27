@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Api.Extensions;
+using Api.Persistence.Contexto;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Controllers
 {
@@ -18,10 +20,12 @@ namespace Api.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly ITokenService _tokenService;
-        public AccountController(IAccountService accountService, ITokenService tokenService)
+        private readonly ApiContext _context;
+        public AccountController(IAccountService accountService, ITokenService tokenService, ApiContext context)
         {
             _tokenService = tokenService;
             _accountService = accountService;
+            _context = context;
 
         }
 
@@ -31,8 +35,7 @@ namespace Api.Controllers
         {
             try
             {
-                var userName = User.GetUserName();
-                var user = await _accountService.GetUserByUserNameAsync(userName);
+                var user = await _context.Users.ToListAsync();
                 return Ok(user);
             }
             catch (System.Exception ex)
