@@ -1,0 +1,55 @@
+.pg-cadastro {
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+
+  h2{
+    margin-bottom: 20px;
+  }
+  &__linha{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    div{
+      width: 49%;
+    }
+  }
+  &__info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    &--label{
+      margin-bottom: 10px;
+    }
+    &--input {
+      // margin-bottom: 20px;
+      background-color: #F4F4F8;
+      box-shadow: 0 0 4px black;
+      border: none;
+      height: 50px;
+      border-radius: 10px;
+      padding: 0 20px;
+      min-width: 100%;
+      &:focus{
+        border: none;
+      }
+    }
+  }
+  &__button{
+    margin-top: 10px;
+    background-color: #4249FF;
+    color: #fff;
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    &:hover{
+      background-color: #1B31FF;
+    }
+  }
+}

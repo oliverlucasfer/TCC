@@ -2,12 +2,12 @@
   <div class="pg-document">
     <div class="pg-document__header">
       <div class="">
-        <a style="margin-top: 5px" href="/"
+        <a style="margin-top: 5px" href="/lista"
           ><img src="../../assets/icons/arrow-back.svg" alt=""
         /></a>
         <h1>{{ documento.titulo }}</h1>
       </div>
-      <button (click)="redirectTo(documento.id)" class="btn-edit">
+      <button *ngIf="tipo" (click)="redirectTo(documento.id)" class="btn-edit">
         <strong class="btn-edit__name">Editar</strong>
         <img class="btn-edit__icon" src="../../assets/icons/edit.svg" alt="" />
       </button>
@@ -17,7 +17,7 @@
         <label class="pg-document__info--label" htmlFor="">Autor(es)</label>
         <p class="pg-document__info--data">{{ documento.autor }}</p>
         <label class="pg-document__info--label" htmlFor="">Área</label>
-        <p class="pg-document__info--data">{{ documento.area }}</p>
+        <p class="pg-document__info--data">{{ areas[documento.area] }}</p>
         <label class="pg-document__info--label" htmlFor="">Categoria</label>
         <p class="pg-document__info--data">
           {{ categorias[documento.categoria] }}
@@ -30,8 +30,9 @@
           >Ano de Publicação</label
         >
         <p class="pg-document__info--data">{{ documento.ano }}</p>
+        <br />
         <a
-          href="../../../../assets/{{ documentoURL }}"
+          href="../../assets/{{ documentoURL }}"
           class="pg-document__info--button"
           download="{{ documentoURL }}"
         >

@@ -8,6 +8,16 @@ export const categorias = [
   'Livro',
 ] as const;
 
+export const areas = [
+  'Engenharia',
+  'Saúde',
+  'Direito',
+  'Robótica',
+  'Administração',
+  'Contabilidade',
+  'Desenvolvimento',
+];
+
 export interface Documento {
   id: number;
   titulo: string;
@@ -15,6 +25,7 @@ export interface Documento {
   area: string;
   categoria: number;
   documentoURL: string;
+  documentoText: string;
   palavrasChave: string;
   resumo: string;
   ano: string;

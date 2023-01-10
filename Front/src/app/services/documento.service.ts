@@ -13,6 +13,14 @@ export class DocumentoService {
 
   constructor(private http: HttpClient) {}
 
+  public getDocumento() {
+    return this.http.get<Documento>(`${this.baseURL}/pdf`);
+  }
+
+  public getFiltro(area: string, ano: string) {
+    return this.http.get<Documento[]>(`${this.baseURL}/filtro`);
+  }
+
   public getDocumentos(
     page?: number,
     itemsPerPage?: number,

@@ -1,7 +1,7 @@
 <div class="page">
   <div class="pg-busca__header">
     <h1>Documentos</h1>
-    <button (click)="redirectTo()" class="btn-edit">
+    <button *ngIf="tipo !== 0" (click)="redirectTo()" class="btn-edit">
       <strong class="btn-edit__name">Cadastrar Novo</strong>
       <img class="btn-edit__icon" src="../../assets/icons/edit.svg" alt="" />
     </button>
@@ -17,39 +17,38 @@
       (input)="filtarDocumentos($event.target)"
     />
   </div>
-  <div class="card mt-5 rounded shadow-sm">
-    <table class="table table-striped">
-      <thead class="thead-dark">
+  <div>
+    <div class="pg-busca__list--header">
+      <div class="list-info">
+        <h3 class="list-info__tittle">Lista de Documentos</h3>
+      </div>
+      <!-- <button class="btn-filter" (click)="openModal($event, template)">
+        <img src="./../../../../assets/icons/filter.svg" alt="" /> Filtro
+      </button> -->
+    </div>
+    <table>
+      <thead>
         <tr>
           <th>Título</th>
-          <th>Autor(es)</th>
           <th>Área</th>
           <th>Categoria</th>
-          <th>Opções</th>
+          <th>Autor(es)</th>
+          <th>Palavras Chave</th>
+          <th>Ano</th>
         </tr>
       </thead>
       <tbody *ngIf="documentos && documentos.length">
-        <tr *ngFor="let documento of documentos">
+        <tr
+          class="li-item"
+          *ngFor="let documento of documentos"
+          (click)="info(documento.id)"
+        >
           <td>{{ documento.titulo }}</td>
-          <td>{{ documento.autor }}</td>
-          <td>{{ documento.area }}</td>
+          <td>{{ areas[documento.area] }}</td>
           <td>{{ categorias[documento.categoria] }}</td>
-          <td>
-            <button
-              type="button"
-              class="btn btn-info btn-sm mr-2"
-              (click)="info(documento.id)"
-            >
-              <i class="fa-solid fa-circle-info"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger btn-sm mr-2"
-              (click)="openModal($event, template, documento.id)"
-            >
-              <i class="fa fa-trash"></i>
-            </button>
-          </td>
+          <td>{{ documento.autor }}</td>
+          <td>{{ documento.palavrasChave }}</td>
+          <td>{{ documento.ano }}</td>
         </tr>
       </tbody>
       <tfoot *ngIf="!documentos.length">
@@ -60,7 +59,7 @@
         </tr>
       </tfoot>
     </table>
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center" style="margin-top: 30px">
       <pagination
         [boundaryLinks]="true"
         [totalItems]="pagination.totalItems"
@@ -78,14 +77,65 @@
   </div>
 
   <ng-template #template>
-    <div class="modal-body text-center">
-      <p>Tem certeza que quer Excluir esse Documento?</p>
-      <button type="button" class="btn btn-primary" (click)="confirm()">
-        Sim
-      </button>
-      <button type="button" class="btn btn-danger" (click)="decline()">
-        Não
-      </button>
+    <div class="modal__container filter-modal">
+      <div class="filter-modal__header">
+        <h3>Filtro</h3>
+      </div>
+      <div class="filter-modal__line">
+        <h4>Área</h4>
+        <select class="filter-modal__select-area" name="select-area">
+          <option value="0">Engenharia</option>
+          <option value="1">Saúde</option>
+          <option value="2">Direito</option>
+          <option value="3">Robótica</option>
+          <option value="4">Administração</option>
+          <option value="5">Contabilidade</option>
+          <option value="6">Programação</option>
+        </select>
+      </div>
+      <div class="filter-modal__line">
+        <h4>Ano de Publicação</h4>
+        <div class="date-filter">
+          <select class="date-filter__select" name="select-date">
+            <option value="2001">2001</option>
+            <option value="2002">2002</option>
+            <option value="2003">2003</option>
+            <option value="2004">2004</option>
+            <option value="2005">2005</option>
+            <option value="2006">2006</option>
+            <option value="2007">2007</option>
+            <option value="2008">2008</option>
+            <option value="2009">2009</option>
+            <option value="2010">2010</option>
+            <option value="2011">2011</option>
+            <option value="2012">2012</option>
+            <option value="2013">2013</option>
+            <option value="2014">2014</option>
+            <option value="2015">2015</option>
+            <option value="2016">2016</option>
+            <option value="2017">2017</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-modal__actions">
+        <button
+          class="filter-modal__button filter-modal__button--clean"
+          (click)="limpar()"
+        >
+          Limpar
+        </button>
+        <button
+          class="filter-modal__button filter-modal__button--apply"
+          (click)="aplicar()"
+        >
+          Aplicar
+        </button>
+      </div>
     </div>
   </ng-template>
 </div>
