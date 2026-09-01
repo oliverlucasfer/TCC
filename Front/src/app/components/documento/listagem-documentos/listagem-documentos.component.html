@@ -1,14 +1,16 @@
 <div class="page">
   <div class="pg-busca__header">
     <h1>Documentos</h1>
-    <button *ngIf="podeBackup" (click)="baixarBackup()" class="btn-edit" style="margin-right: 8px">
-      <strong class="btn-edit__name">Backup</strong>
-      <img class="btn-edit__icon" src="../../assets/icons/down.svg" alt="" />
-    </button>
-    <button *ngIf="podeEditar" (click)="redirectTo()" class="btn-edit">
-      <strong class="btn-edit__name">Cadastrar Novo</strong>
-      <img class="btn-edit__icon" src="../../assets/icons/edit.svg" alt="" />
-    </button>
+    <div class="pg-busca__actions">
+      <button *ngIf="podeBackup" (click)="baixarBackup()" class="btn-edit btn-edit--ghost">
+        <strong class="btn-edit__name">Backup</strong>
+        <img class="btn-edit__icon" src="../../assets/icons/down.svg" alt="" />
+      </button>
+      <button *ngIf="podeEditar" (click)="redirectTo()" class="btn-edit">
+        <strong class="btn-edit__name">Cadastrar Novo</strong>
+        <img class="btn-edit__icon" src="../../assets/icons/edit.svg" alt="" />
+      </button>
+    </div>
   </div>
   <div class="pg-busca__search">
     <div class="pg-busca__search--icon">
@@ -17,67 +19,68 @@
     <input
       class="pg-busca__search--input"
       type="text"
-      placeholder="Buscar"
+      placeholder="Buscar por título, autor ou conteúdo…"
       (input)="filtarDocumentos($event.target)"
     />
   </div>
-  <div>
-    <div class="pg-busca__list--header">
-      <div class="list-info">
-        <h3 class="list-info__tittle">Lista de Documentos</h3>
+
+  <!-- Skeletons de loading -->
+  <div class="cards" *ngIf="carregando">
+    <div class="card-doc" *ngFor="let s of [1, 2, 3, 4, 5, 6]">
+      <div class="pd-skeleton card-doc__icon-skel"></div>
+      <div class="pd-skeleton card-doc__linha-skel" style="width: 90%"></div>
+      <div class="pd-skeleton card-doc__linha-skel" style="width: 60%"></div>
+      <div class="card-doc__chips">
+        <div class="pd-skeleton card-doc__chip-skel"></div>
+        <div class="pd-skeleton card-doc__chip-skel"></div>
       </div>
-      <!-- <button class="btn-filter" (click)="openModal($event, template)">
-        <img src="./../../../../assets/icons/filter.svg" alt="" /> Filtro
-      </button> -->
     </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Título</th>
-          <th>Área</th>
-          <th>Categoria</th>
-          <th>Autor(es)</th>
-          <th>Palavras Chave</th>
-          <th>Ano</th>
-        </tr>
-      </thead>
-      <tbody *ngIf="documentos && documentos.length">
-        <tr
-          class="li-item"
-          *ngFor="let documento of documentos"
-          (click)="info(documento.id)"
-        >
-          <td>{{ documento.titulo }}</td>
-          <td>{{ areas[documento.area] }}</td>
-          <td>{{ categorias[documento.categoria] }}</td>
-          <td>{{ documento.autor }}</td>
-          <td>{{ documento.palavrasChave }}</td>
-          <td>{{ documento.ano }}</td>
-        </tr>
-      </tbody>
-      <tfoot *ngIf="!documentos.length">
-        <tr>
-          <td colspan="8" class="text-center">
-            <h4>Nenhum documento encontrado!</h4>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-    <div class="d-flex justify-content-center" style="margin-top: 30px">
-      <pagination
-        [boundaryLinks]="true"
-        [totalItems]="pagination.totalItems"
-        [itemsPerPage]="pagination.itemsPerPage"
-        [(ngModel)]="pagination.currentPage"
-        (pageChanged)="pageChanged($event)"
-        pageBtnClass="btn"
-        previousText="&lsaquo;"
-        nextText="&rsaquo;"
-        firstText="&laquo;"
-        lastText="&raquo;"
-      >
-      </pagination>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty" *ngIf="!carregando && !documentos.length">
+    <img src="../../assets/icons/search.svg" alt="" class="empty__icon" />
+    <h3>Nenhum documento encontrado</h3>
+    <p>Tente ajustar a busca ou navegue por uma categoria no menu lateral.</p>
+    <button class="btn-edit" (click)="limpar()">Limpar filtros</button>
+  </div>
+
+  <!-- Grid de cards -->
+  <div class="cards" *ngIf="!carregando && documentos.length">
+    <div
+      class="card-doc"
+      *ngFor="let documento of documentos"
+      (click)="info(documento.id)"
+    >
+      <div class="card-doc__top">
+        <div class="card-doc__icon" [style.background]="corCategoria(documento.categoria)">
+          PDF
+        </div>
+        <span class="pd-chip">{{ categorias[documento.categoria] }}</span>
+      </div>
+      <h3 class="card-doc__titulo" [title]="documento.titulo">{{ documento.titulo }}</h3>
+      <p class="card-doc__autor">{{ documento.autor }}</p>
+      <div class="card-doc__chips">
+        <span class="pd-chip pd-chip--muted">{{ areas[documento.area] }}</span>
+        <span class="pd-chip pd-chip--muted">{{ documento.ano }}</span>
+      </div>
     </div>
+  </div>
+
+  <div class="d-flex justify-content-center" style="margin-top: 30px" *ngIf="!carregando && documentos.length">
+    <pagination
+      [boundaryLinks]="true"
+      [totalItems]="pagination.totalItems"
+      [itemsPerPage]="pagination.itemsPerPage"
+      [(ngModel)]="pagination.currentPage"
+      (pageChanged)="pageChanged($event)"
+      pageBtnClass="btn"
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
   </div>
 
   <ng-template #template>

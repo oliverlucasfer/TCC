@@ -2,38 +2,58 @@
   <div>
     <form #loginForm="ngForm" (ngSubmit)="login()">
       <div class="pg-login">
-        <img class="pg-login__img" src="../../../../assets/icons/user.svg" alt="" />
-        <h2 class="pg-login__text">Entrar com</h2>
-        <label for="username" class="sr-only">Usuário</label>
+        <div class="pg-login__avatar">
+          <img src="../../../../assets/icons/user.svg" alt="" />
+        </div>
+        <h2 class="pg-login__text">Entrar</h2>
+        <p class="pg-login__sub">Acesse sua conta ProDocs</p>
+
+        <label for="username" class="pg-login__label">Usuário</label>
         <input
           [(ngModel)]="model.userName"
-          type="email"
+          type="text"
           id="username"
           class="pg-login__input"
-          placeholder="Usuário"
+          placeholder="Seu usuário"
           name="username"
+          autocomplete="username"
           required
         />
-        <label for="password" class="sr-only">Password</label>
-        <input
-          [(ngModel)]="model.password"
-          type="password"
-          id="password"
-          class="pg-login__input"
-          placeholder="Senha"
-          name="password"
-          required
-        />
+
+        <label for="password" class="pg-login__label">Senha</label>
+        <div class="pg-login__senha">
+          <input
+            [(ngModel)]="model.password"
+            [type]="mostrarSenha ? 'text' : 'password'"
+            id="password"
+            class="pg-login__input"
+            placeholder="Sua senha"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+          <button
+            type="button"
+            class="pg-login__toggle"
+            (click)="mostrarSenha = !mostrarSenha"
+            [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
+          >
+            {{ mostrarSenha ? '🙈' : '👁' }}
+          </button>
+        </div>
+
         <button
-          [disabled]="loginForm.invalid"
-          class="pg-login__button btn btn-lg btn-primary btn-block"
+          [disabled]="loginForm.invalid || enviando"
+          class="pg-login__button"
           type="submit"
         >
-          Entrar
+          <span *ngIf="enviando" class="spinner"></span>
+          {{ enviando ? 'Entrando…' : 'Entrar' }}
         </button>
-        <p class="pg-login__text">ou <a class="pg-login__link" routerLink="/user/registration"
-            >Ou Cadastre-se</a
-          >
+
+        <p class="pg-login__text">
+          Não tem conta?
+          <a class="pg-login__link" routerLink="/user/registration">Cadastre-se</a>
         </p>
       </div>
     </form>

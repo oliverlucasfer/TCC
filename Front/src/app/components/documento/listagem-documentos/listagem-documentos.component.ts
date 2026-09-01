@@ -25,6 +25,7 @@ export class ListagemDocumentosComponent implements OnInit {
   tipo: string;
   podeEditar = false;
   podeBackup = false;
+  carregando = true;
   filtroArea = '';
   filtroAno = '';
   anos: number[] = Array.from({ length: 30 }, (_, i) => 2026 - i);
@@ -62,6 +63,7 @@ export class ListagemDocumentosComponent implements OnInit {
     this.termoBuscaChanged
       .pipe(debounceTime(1000), takeUntil(this.destroy$))
       .subscribe((filtrarPor) => {
+        this.carregando = true;
         this.documentoService
           .getDocumentos(
             this.pagination.currentPage,
@@ -70,11 +72,13 @@ export class ListagemDocumentosComponent implements OnInit {
           )
           .subscribe(
             (paginatedResult: PaginatedResult<Documento[]>) => {
-              this.documentos = paginatedResult.result;
+              this.documentos = paginatedResult.result || [];
               this.pagination = paginatedResult.pagination;
+              this.carregando = false;
             },
             (error: any) => {
               this.toastService.error('Erro ao buscar documentos.');
+              this.carregando = false;
             }
           );
       });
@@ -100,6 +104,7 @@ export class ListagemDocumentosComponent implements OnInit {
   }
 
   public carregarDocumentos(): void {
+    this.carregando = true;
     this.documentoService
       .getDocumentos(
         this.pagination.currentPage,
@@ -109,13 +114,28 @@ export class ListagemDocumentosComponent implements OnInit {
       )
       .subscribe(
         (paginatedResult: PaginatedResult<Documento[]>) => {
-          this.documentos = paginatedResult.result;
+          this.documentos = paginatedResult.result || [];
           this.pagination = paginatedResult.pagination;
+          this.carregando = false;
         },
         (error: any) => {
           this.toastService.error('Erro ao buscar documentos.');
+          this.carregando = false;
         }
       );
+  }
+
+  public corCategoria(categoria: number): string {
+    const cores = [
+      '#2780e3', // Resumo
+      '#3fb618', // Artigo
+      '#8f4fd1', // Monografia
+      '#e8590c', // Dissertação
+      '#d6336c', // Tese
+      '#20c997', // Livro
+      '#fd7e14', // Projeto
+    ];
+    return cores[categoria] || '#2780e3';
   }
 
   info(id: number) {
@@ -136,16 +156,19 @@ export class ListagemDocumentosComponent implements OnInit {
   }
 
   aplicar() {
+    this.carregando = true;
     this.documentoService
       .getFiltro(this.filtroArea, this.filtroAno, this.pagination.currentPage, this.pagination.itemsPerPage)
       .subscribe(
         (paginatedResult: PaginatedResult<Documento[]>) => {
-          this.documentos = paginatedResult.result;
+          this.documentos = paginatedResult.result || [];
           this.pagination = paginatedResult.pagination;
           this.modalRef?.hide();
+          this.carregando = false;
         },
 (error: any) => {
         this.toastService.error('Erro ao aplicar filtro.');
+        this.carregando = false;
       }
     );
   }

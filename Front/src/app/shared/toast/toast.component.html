@@ -1,9 +1,16 @@
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
-  <div *ngFor="let toast of toasts" class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header" [class.bg-danger]="toast.type === 'danger'" [class.bg-success]="toast.type === 'success'" [class.bg-warning]="toast.type === 'warning'" [class.text-white]="toast.type === 'danger' || toast.type === 'success'">
-      <strong class="me-auto">ProDocs</strong>
-      <button type="button" class="btn-close" (click)="dismiss(toast.id)"></button>
-    </div>
-    <div class="toast-body text-dark">{{ toast.message }}</div>
+<div class="pd-toast-container">
+  <div
+    *ngFor="let toast of toasts"
+    class="pd-toast"
+    [class.pd-toast--success]="toast.type === 'success'"
+    [class.pd-toast--danger]="toast.type === 'danger'"
+    [class.pd-toast--warning]="toast.type === 'warning'"
+    [class.pd-toast--info]="toast.type === 'info'"
+  >
+    <span class="pd-toast__icon">
+      {{ toast.type === 'success' ? '✓' : toast.type === 'danger' ? '✕' : toast.type === 'warning' ? '!' : 'i' }}
+    </span>
+    <span class="pd-toast__msg">{{ toast.message }}</span>
+    <button type="button" class="pd-toast__close" (click)="dismiss(toast.id)" aria-label="Fechar">×</button>
   </div>
 </div>

@@ -1,16 +1,43 @@
-<div class="header">
+<header class="header">
   <div class="header__container">
-    <a href="/">
+    <button class="header__hamburger" type="button" aria-label="Abrir menu" (click)="ui.toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+
+    <a class="header__brand" href="/">
       <img
         class="header__container--logo"
         src="../../assets/icons/logo-vertical.svg"
-        alt=""
-    /></a>
-    <div class="userinfo" (click)="redirectTo()">
-      <span class="userinfo__username">Perfil</span>
-      <div class="userinfo__avatar">
-        <img src="../../assets/icons/user.svg" alt="" />
+        alt="ProDocs"
+      />
+    </a>
+
+    <div class="header__actions">
+      <button
+        class="header__theme"
+        type="button"
+        (click)="toggleTema($event)"
+        [attr.aria-label]="theme.isDark() ? 'Ativar tema claro' : 'Ativar tema escuro'"
+        [title]="theme.isDark() ? 'Tema claro' : 'Tema escuro'"
+      >
+        <span *ngIf="!theme.isDark()">🌙</span>
+        <span *ngIf="theme.isDark()">☀️</span>
+      </button>
+
+      <div *ngIf="user; else botaoLogin" class="userinfo" (click)="toggleMenu($event)">
+        <span class="userinfo__username">{{ primeiroNome }}</span>
+        <div class="userinfo__avatar">
+          <img src="../../assets/icons/user.svg" alt="" />
+        </div>
+        <div class="userinfo__menu" *ngIf="menuAberto" (click)="$event.stopPropagation()">
+          <button type="button" (click)="redirectTo()">Perfil</button>
+          <button type="button" class="userinfo__menu--logout" (click)="logout()">Sair</button>
+        </div>
       </div>
+
+      <ng-template #botaoLogin>
+        <a class="header__login" routerLink="/user/login">Entrar</a>
+      </ng-template>
     </div>
   </div>
-</div>
+</header>

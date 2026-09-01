@@ -75,7 +75,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id}/download")]
-        public async Task<IActionResult> Download(int id)
+        public async Task<IActionResult> Download(int id, [FromQuery] bool inline = false)
         {
             var info = await _documentoService.ObterArquivoParaDownloadAsync(id);
             if (info == null || !info.ArquivoExiste)
@@ -84,6 +84,14 @@ namespace Api.Controllers
             var stream = System.IO.File.OpenRead(info.CaminhoArquivo);
 
             var nomeSeguro = System.IO.Path.GetFileName(info.NomeOriginal);
+
+            if (inline)
+            {
+                Response.Headers["content-disposition"] = $"inline; filename=\"{System.Net.WebUtility.UrlEncode(nomeSeguro)}\"; filename*=UTF-8''{Uri.EscapeDataString(nomeSeguro)}";
+                Response.Headers["x-content-type-options"] = "nosniff";
+                return File(stream, "application/pdf", enableRangeProcessing: true);
+            }
+
             var contentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
             {
                 FileName = nomeSeguro,

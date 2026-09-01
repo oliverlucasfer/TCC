@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AccountService } from 'src/app/services/account.service';
+import { ThemeService } from 'src/app/services/theme.service';
+import { UiService } from 'src/app/services/ui.service';
+import { User } from 'src/app/models/identity/User';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-header',
@@ -8,11 +13,44 @@ import { Router } from '@angular/router';
     standalone: false
 })
 export class HeaderComponent implements OnInit {
-  constructor(private router: Router) {}
+  user: User | null = null;
+  menuAberto = false;
 
-  ngOnInit() {}
+  constructor(
+    private router: Router,
+    private accountService: AccountService,
+    public theme: ThemeService,
+    public ui: UiService
+  ) {}
+
+  ngOnInit() {
+    this.accountService.currentUser$.subscribe((user) => {
+      this.user = user || null;
+    });
+  }
+
+  get primeiroNome(): string {
+    return this.user?.primeiroNome || this.user?.userName || '';
+  }
 
   redirectTo() {
+    this.menuAberto = false;
     this.router.navigate(['/user/perfil']);
+  }
+
+  logout() {
+    this.menuAberto = false;
+    this.accountService.logout();
+    this.router.navigate(['/user/login']);
+  }
+
+  toggleMenu(event: Event) {
+    event.stopPropagation();
+    this.menuAberto = !this.menuAberto;
+  }
+
+  toggleTema(event: Event) {
+    event.stopPropagation();
+    this.theme.toggle();
   }
 }

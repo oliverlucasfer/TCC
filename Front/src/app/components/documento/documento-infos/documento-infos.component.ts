@@ -17,6 +17,7 @@ export class DocumentoInfosComponent implements OnInit {
   documentoId!: number;
   documentoURL!: string;
   downloadUrl = '';
+  previewUrl = '';
   categorias = categorias;
   areas = areas;
   tipo: string;
@@ -42,6 +43,7 @@ export class DocumentoInfosComponent implements OnInit {
 
     if (this.documentoId !== null && this.documentoId !== 0) {
       this.downloadUrl = `${environment.apiURL}api/documentos/${this.documentoId}/download`;
+      this.previewUrl = `${environment.apiURL}api/documentos/${this.documentoId}/download?inline=true`;
       this.documentoService.getDocumentoById(this.documentoId).subscribe(
         (documento: Documento) => {
           this.documento = documento;

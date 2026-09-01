@@ -1,28 +1,13 @@
-<div class="sidebar">
+<div class="sidebar" [class.sidebar--mobile-open]="mobileAberto">
   <nav class="sidebar__menu">
-    <a class="sidebar__menu--item" routerLink="/lista"
-      >Documentos<img src="../../assets/icons/right.svg" alt=""
-    /></a>
-    <a class="sidebar__menu--item" (click)="goTo(0)"
-      >Resumos<img src="../../assets/icons/right.svg" alt=""
-    /></a>
-    <a class="sidebar__menu--item" (click)="goTo(1)"
-      >Artigos<img src="../../assets/icons/right.svg" alt=""
-    /></a>
-    <a class="sidebar__menu--item" (click)="goTo(2)"
-      >Monografias<img src="../../assets/icons/right.svg" alt=""
-    /></a>
-    <a class="sidebar__menu--item" (click)="goTo(3)"
-      >Dissertações<img src="../../assets/icons/right.svg" alt=""
-    /></a>
-    <a class="sidebar__menu--item" (click)="goTo(4)"
-      >Teses<img src="../../assets/icons/right.svg" alt=""
-    /></a>
-    <a class="sidebar__menu--item" (click)="goTo(5)"
-      >Livros<img src="../../assets/icons/right.svg" alt=""
-    /></a>
-    <a class="sidebar__menu--item" (click)="goTo(6)"
-      >Projetos<img src="../../assets/icons/right.svg" alt=""
-    /></a>
+    <a
+      *ngFor="let item of itens"
+      class="sidebar__menu--item"
+      [class.sidebar__menu--item--active]="isActive(item)"
+      (click)="navegar(item.rota)"
+    >
+      <span>{{ item.label }}</span>
+      <img src="../../assets/icons/right.svg" alt="" />
+    </a>
   </nav>
 </div>

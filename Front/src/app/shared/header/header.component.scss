@@ -1,52 +1,167 @@
-.header{
-  background-color: white;
+.header {
+  background-color: var(--pd-surface);
   width: 100%;
-  height: 75px;
-  box-shadow: 0px 0px 5px rgb(0 0 0 / 50%);
-  z-index: 3;
-  position: relative;
-  &__container{
-    // max-width: 1000px;
+  height: var(--pd-header-h);
+  box-shadow: var(--pd-shadow-sm);
+  z-index: 50;
+  position: sticky;
+  top: 0;
+
+  &__container {
     height: 100%;
     margin: 0 auto;
-    padding: 0 50px;
+    padding: 0 28px;
     align-items: center;
     display: flex;
     justify-content: space-between;
-    &--logo{
-      width: 150px;
+    gap: 16px;
+
+    &--logo {
+      width: 110px;
+      height: auto;
+      display: block;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+
+  &__theme {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background-color var(--pd-transition);
+
+    &:hover { background-color: var(--pd-surface-alt); }
+  }
+
+  &__login {
+    padding: 8px 18px;
+    border-radius: var(--pd-radius-sm);
+    background: var(--pd-primary);
+    color: #fff !important;
+    font-weight: 600;
+    transition: background-color var(--pd-transition);
+    &:hover { background: var(--pd-primary-hover); }
+  }
+
+  // hambúrguer: escondido no desktop, exibido via media query mobile
+  &__hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+    border: none;
+    border-radius: var(--pd-radius-sm);
+    background: transparent;
+    cursor: pointer;
+
+    span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      border-radius: 2px;
+      background: var(--pd-text);
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .header {
+    &__hamburger {
+      display: flex;
+    }
+
+    &__container--logo {
+      width: 90px;
     }
   }
 }
 
 .userinfo {
-  padding: 10px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
-  border-radius: 20px;
-  transition: background-color 0.2s;
+  border-radius: 999px;
+  transition: background-color var(--pd-transition);
   cursor: pointer;
-  &:hover{
-    background-color: rgba(0,0,0,0.05);
+  position: relative;
+
+  &:hover { background-color: var(--pd-surface-alt); }
+
+  &__username {
+    font-weight: 600;
+    font-size: 14px;
+    margin-right: 10px;
+    color: var(--pd-text);
   }
-}
 
-.userinfo__username{
-  font-weight: bold;
-  margin-right: 10px;
-}
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: var(--pd-primary-soft);
 
-.userinfo__avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #F4F4F8;
-  box-shadow: 0 0 2px rgb(0 0 0 / 20%);
-  img{
-    width: 25px;
-    height: 25px;
+    img {
+      width: 20px;
+      height: 20px;
+      filter: invert(48%) sepia(85%) saturate(1600%) hue-rotate(196deg);
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: var(--pd-surface);
+    border: 1px solid var(--pd-border);
+    border-radius: var(--pd-radius);
+    box-shadow: var(--pd-shadow);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    z-index: 60;
+
+    button {
+      text-align: left;
+      border: none;
+      background: transparent;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--pd-radius-sm);
+      cursor: pointer;
+      color: var(--pd-text);
+      transition: background-color var(--pd-transition);
+
+      &:hover { background-color: var(--pd-surface-alt); }
+    }
+
+    &--logout {
+      color: var(--pd-danger) !important;
+    }
   }
 }

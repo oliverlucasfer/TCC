@@ -12,6 +12,8 @@ import { ToastService } from 'src/app/services/toast.service';
 })
 export class LoginComponent implements OnInit {
   model = {} as UserLogin;
+  mostrarSenha = false;
+  enviando = false;
 
   constructor(
     private accountService: AccountService,
@@ -23,12 +25,14 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
 
   public login(): void {
+    this.enviando = true;
     this.accountService.login(this.model).subscribe(
       () => {
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
         this.router.navigateByUrl(returnUrl || '');
       },
       (error: any) => {
+        this.enviando = false;
         if (error.status == 401) this.toastService.error('Usuário ou senha inválidos.');
         else this.toastService.error('Erro ao entrar. Tente novamente.');
       }

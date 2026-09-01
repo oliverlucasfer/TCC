@@ -4,6 +4,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { AppRoutingModule } from './app-routing.module';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { AppComponent } from './app.component';
+import { HomeComponent } from './components/home/home.component';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -23,6 +24,7 @@ import { ToastComponent } from './shared/toast/toast.component';
 
 @NgModule({ declarations: [
         AppComponent,
+        HomeComponent,
         DocumentoInfosComponent,
         CriarEditarComponent,
         ListagemDocumentosComponent,

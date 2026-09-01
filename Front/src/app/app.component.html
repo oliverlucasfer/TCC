@@ -1,8 +1,9 @@
 <app-header></app-header>
 <div class="main">
   <app-sidenav></app-sidenav>
-  <div style="width: 100%">
+  <div class="main__conteudo">
     <router-outlet></router-outlet>
   </div>
 </div>
+<div class="backdrop-mobile" *ngIf="menuAberto" (click)="fecharMenu()"></div>
 <app-toast></app-toast>
