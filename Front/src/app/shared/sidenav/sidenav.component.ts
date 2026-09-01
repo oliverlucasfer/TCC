@@ -3,10 +3,14 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UiService } from 'src/app/services/ui.service';
+import { DocumentoService } from 'src/app/services/documento.service';
+import { CATEGORIA_LABELS, CATEGORIA_CORES } from 'src/app/shared/categorias';
 
 interface ItemMenu {
   label: string;
   rota: string;
+  indice: number;
+  cor: string;
 }
 
 @Component({
@@ -18,19 +22,22 @@ interface ItemMenu {
 export class SidenavComponent implements OnInit {
   private destroy$ = new Subject<void>();
   mobileAberto = false;
-  itens: ItemMenu[] = [
-    { label: 'Documentos', rota: '/lista' },
-    { label: 'Resumos', rota: '/0' },
-    { label: 'Artigos', rota: '/1' },
-    { label: 'Monografias', rota: '/2' },
-    { label: 'Dissertações', rota: '/3' },
-    { label: 'Teses', rota: '/4' },
-    { label: 'Livros', rota: '/5' },
-    { label: 'Projetos', rota: '/6' },
-  ];
+  contagens: { [key: string]: number } = {};
+
+  categorias: ItemMenu[] = CATEGORIA_LABELS.map((label, i) => ({
+    label,
+    rota: `/${i}`,
+    indice: i,
+    cor: CATEGORIA_CORES[i],
+  }));
+
   urlAtual = '';
 
-  constructor(private router: Router, private ui: UiService) {}
+  constructor(
+    private router: Router,
+    private ui: UiService,
+    private documentoService: DocumentoService
+  ) {}
 
   ngOnInit() {
     this.urlAtual = this.router.url;
@@ -42,10 +49,12 @@ export class SidenavComponent implements OnInit {
       .subscribe(() => {
         this.urlAtual = this.router.url;
         this.ui.fecharMenu();
+        this.carregarContagens();
       });
     this.ui.menuAberto$.pipe(takeUntil(this.destroy$)).subscribe((aberto) => {
       this.mobileAberto = aberto;
     });
+    this.carregarContagens();
   }
 
   ngOnDestroy(): void {
@@ -57,7 +66,14 @@ export class SidenavComponent implements OnInit {
     this.router.navigateByUrl(rota);
   }
 
-  isActive(item: ItemMenu): boolean {
-    return this.urlAtual === item.rota;
+  isActive(rota: string): boolean {
+    return this.urlAtual === rota;
+  }
+
+  private carregarContagens(): void {
+    this.documentoService.getContagem().subscribe(
+      (c) => (this.contagens = c || {}),
+      () => {}
+    );
   }
 }

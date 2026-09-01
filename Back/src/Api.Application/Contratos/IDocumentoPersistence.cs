@@ -12,5 +12,6 @@ namespace Api.Application.Contratos
         Task<Documento> GetDocumentoByIdAsync(int DocumentoId);
         Task<PageList<Documento>> GetAllDocumentosByCategoriaAsync(Categoria categoria, PageParams pageParams);
         Task<PageList<Documento>> GetDocumentosByFiltroAsync(PageParams pageParams);
+        Task<Dictionary<int, int>> ContagemPorCategoriaAsync();
     }
 }

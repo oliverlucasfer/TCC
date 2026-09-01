@@ -23,33 +23,37 @@
     width: 100%;
     &--label{
       margin-bottom: 10px;
+      color: var(--pd-text);
     }
     &--input {
       // margin-bottom: 20px;
-      background-color: #F4F4F8;
-      box-shadow: 0 0 4px black;
-      border: none;
+      background-color: var(--pd-surface-alt);
+      border: 1px solid var(--pd-border);
+      color: var(--pd-text);
       height: 50px;
       border-radius: 10px;
       padding: 0 20px;
       min-width: 100%;
       &:focus{
-        border: none;
+        border-color: var(--pd-primary);
+        box-shadow: 0 0 0 3px var(--pd-primary-soft);
+        outline: none;
       }
     }
   }
   &__button{
     margin-top: 10px;
-    background-color: #4249FF;
+    background-color: var(--pd-primary);
     color: #fff;
     height: 50px;
     border-radius: 10px;
     border: none;
     width: 100%;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
     &:hover{
-      background-color: #1B31FF;
+      background-color: var(--pd-primary-hover);
     }
   }
 }

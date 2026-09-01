@@ -80,5 +80,14 @@ namespace Api.Persistence
 
             return await PageList<Documento>.CreateAsync(query.ToList(), pageParams.PageNumber, pageParams.PageSize);
         }
+
+        public async Task<Dictionary<int, int>> ContagemPorCategoriaAsync()
+        {
+            return await _context.Documentos
+                .AsNoTracking()
+                .GroupBy(d => (int)d.Categoria)
+                .Select(g => new { Chave = g.Key, Total = g.Count() })
+                .ToDictionaryAsync(x => x.Chave, x => x.Total);
+        }
     }
 }

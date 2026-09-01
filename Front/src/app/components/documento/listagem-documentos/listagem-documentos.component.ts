@@ -1,13 +1,14 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Documento, categorias, areas } from 'src/app/models/Documento';
+import { Documento, areas } from 'src/app/models/Documento';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { Subject } from 'rxjs';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { PaginatedResult, Pagination } from 'src/app/models/Pagination';
 import { AccountService } from 'src/app/services/account.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { corCategoria, CATEGORIA_LABELS } from 'src/app/shared/categorias';
 
 @Component({
     selector: 'app-listagem-documentos',
@@ -18,7 +19,7 @@ import { ToastService } from 'src/app/services/toast.service';
 export class ListagemDocumentosComponent implements OnInit {
   modalRef?: BsModalRef;
   public documentos: Documento[] = [];
-  public categorias = categorias;
+  public categorias = CATEGORIA_LABELS;
   public documentoId = 0;
   public pagination = {} as Pagination;
   public categoriaAtual?: number;
@@ -126,16 +127,7 @@ export class ListagemDocumentosComponent implements OnInit {
   }
 
   public corCategoria(categoria: number): string {
-    const cores = [
-      '#2780e3', // Resumo
-      '#3fb618', // Artigo
-      '#8f4fd1', // Monografia
-      '#e8590c', // Dissertação
-      '#d6336c', // Tese
-      '#20c997', // Livro
-      '#fd7e14', // Projeto
-    ];
-    return cores[categoria] || '#2780e3';
+    return corCategoria(categoria);
   }
 
   info(id: number) {

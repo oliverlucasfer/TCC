@@ -203,5 +203,17 @@ namespace Api.Application
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<Dictionary<int, int>> ContagemPorCategoriaAsync()
+        {
+            try
+            {
+                return await _documentoPersistence.ContagemPorCategoriaAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

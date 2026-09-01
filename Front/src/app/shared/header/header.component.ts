@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UiService } from 'src/app/services/ui.service';
 import { User } from 'src/app/models/identity/User';
-import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-header',
@@ -15,6 +14,7 @@ import { take } from 'rxjs/operators';
 export class HeaderComponent implements OnInit {
   user: User | null = null;
   menuAberto = false;
+  rolou = false;
 
   constructor(
     private router: Router,
@@ -31,6 +31,25 @@ export class HeaderComponent implements OnInit {
 
   get primeiroNome(): string {
     return this.user?.primeiroNome || this.user?.userName || '';
+  }
+
+  get iniciais(): string {
+    const nome = this.primeiroNome.trim();
+    if (!nome) return '?';
+    const partes = nome.split(/\s+/);
+    const primeira = partes[0].charAt(0);
+    const segunda = partes.length > 1 ? partes[partes.length - 1].charAt(0) : '';
+    return (primeira + segunda).toUpperCase();
+  }
+
+  @HostListener('window:scroll')
+  onScroll() {
+    this.rolou = window.scrollY > 4;
+  }
+
+  @HostListener('document:click')
+  onClickFora() {
+    if (this.menuAberto) this.menuAberto = false;
   }
 
   redirectTo() {

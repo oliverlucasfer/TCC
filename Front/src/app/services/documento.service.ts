@@ -160,4 +160,8 @@ export class DocumentoService {
       responseType: 'blob' as 'json',
     });
   }
+
+  public getContagem(): Observable<{ [key: string]: number }> {
+    return this.http.get<{ [key: string]: number }>(`${this.baseURL}/contagem`);
+  }
 }

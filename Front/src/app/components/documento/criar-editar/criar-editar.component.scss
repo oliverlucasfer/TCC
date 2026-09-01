@@ -9,32 +9,37 @@
     &--label {
       margin-bottom: 10px;
       font-weight: bold;
+      color: var(--pd-text);
     }
     &--input {
       margin-bottom: 20px;
-      background-color: #f4f4f8;
-      box-shadow: 0 0 4px black;
-      border: none;
+      background-color: var(--pd-surface-alt);
+      border: 1px solid var(--pd-border);
+      color: var(--pd-text);
       height: 50px;
       border-radius: 10px;
       padding: 0 20px;
       min-width: 100%;
       &:focus {
-        border: none;
+        border-color: var(--pd-primary);
+        box-shadow: 0 0 0 3px var(--pd-primary-soft);
+        outline: none;
       }
     }
     &--textarea {
       min-width: 100%;
       min-height: 250px;
       margin-bottom: 20px;
-      background-color: #f4f4f8;
-      box-shadow: 0 0 4px black;
-      border: none;
+      background-color: var(--pd-surface-alt);
+      border: 1px solid var(--pd-border);
+      color: var(--pd-text);
       border-radius: 10px;
       padding: 20px;
       resize: none;
       &:focus {
-        border: none;
+        border-color: var(--pd-primary);
+        box-shadow: 0 0 0 3px var(--pd-primary-soft);
+        outline: none;
       }
     }
   }
@@ -44,43 +49,44 @@
     margin-top: 10px;
     &--save {
       padding: 20px 40px;
-      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--pd-shadow-sm);
       border: none;
       font-weight: bold;
       border-radius: 20px;
-      background-color: #4249ff;
+      background-color: var(--pd-primary);
       transition: background-color 0.2s;
       cursor: pointer;
       color: #ffffff;
       &:hover {
-        background-color: #1b31ff;
+        background-color: var(--pd-primary-hover);
       }
     }
     &--delete {
       padding: 20px 40px;
-      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--pd-shadow-sm);
       border: none;
       font-weight: bold;
       border-radius: 20px;
-      background-color: #ff3535;
+      background-color: var(--pd-danger);
       transition: background-color 0.2s;
       cursor: pointer;
       color: #ffffff;
       &:hover {
-        background-color: #bf1010;
+        background-color: #d92c22;
       }
     }
     &--cancel {
       padding: 20px 40px;
-      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--pd-shadow-sm);
       font-weight: bold;
-      border: none;
+      border: 1px solid var(--pd-border);
       border-radius: 20px;
-      background-color: #fff;
+      background-color: var(--pd-surface);
+      color: var(--pd-text);
       cursor: pointer;
       transition: background-color 0.2s;
       &:hover {
-        background-color: #d9d9d9;
+        background-color: var(--pd-surface-alt);
       }
     }
   }
@@ -95,26 +101,27 @@
 .modal-upload {
   padding: 30px;
   min-width: 450px;
-  background: white;
-  border-radius: 2px;
+  background: var(--pd-surface);
+  border-radius: var(--pd-radius);
   &__label{
     font-size: 18px;
     margin-bottom: 20px;
-    color: #404040;
+    color: var(--pd-text);
     font-weight: bold;
   }
   &__button{
     padding: 10px 20px;
     margin-top: 20px;
-    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--pd-shadow-sm);
     font-weight: bold;
-    border: none;
+    border: 1px solid var(--pd-border);
     border-radius: 15px;
-    background-color: #fff;
+    background-color: var(--pd-surface);
+    color: var(--pd-text);
     cursor: pointer;
     transition: background-color 0.2s;
     &:hover {
-      background-color: #d9d9d9;
+      background-color: var(--pd-surface-alt);
     }
   }
 }

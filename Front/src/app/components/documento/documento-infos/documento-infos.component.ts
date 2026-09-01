@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { areas, categorias, Documento } from 'src/app/models/Documento';
+import { areas, Documento } from 'src/app/models/Documento';
+import { CATEGORIA_LABELS } from 'src/app/shared/categorias';
 import { AccountService } from 'src/app/services/account.service';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { environment } from 'src/environments/environment';
@@ -18,7 +19,7 @@ export class DocumentoInfosComponent implements OnInit {
   documentoURL!: string;
   downloadUrl = '';
   previewUrl = '';
-  categorias = categorias;
+  categorias = CATEGORIA_LABELS;
   areas = areas;
   tipo: string;
   podeEditar = false;

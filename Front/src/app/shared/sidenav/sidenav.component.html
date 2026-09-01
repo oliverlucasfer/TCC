@@ -1,13 +1,34 @@
 <div class="sidebar" [class.sidebar--mobile-open]="mobileAberto">
   <nav class="sidebar__menu">
     <a
-      *ngFor="let item of itens"
+      class="sidebar__menu--item sidebar__menu--item--principal"
+      [class.sidebar__menu--item--active]="isActive('/lista')"
+      (click)="navegar('/lista')"
+    >
+      <span class="sidebar__menu--rotulo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        </svg>
+        Documentos
+      </span>
+    </a>
+
+    <span class="sidebar__secao">Categorias</span>
+
+    <a
+      *ngFor="let item of categorias"
       class="sidebar__menu--item"
-      [class.sidebar__menu--item--active]="isActive(item)"
+      [class.sidebar__menu--item--active]="isActive(item.rota)"
       (click)="navegar(item.rota)"
     >
-      <span>{{ item.label }}</span>
-      <img src="../../assets/icons/right.svg" alt="" />
+      <span class="sidebar__menu--rotulo">
+        <span class="sidebar__ponto" [style.background]="item.cor"></span>
+        {{ item.label }}
+      </span>
+      <span class="sidebar__badge" *ngIf="contagens[item.indice] > 0">{{ contagens[item.indice] }}</span>
     </a>
   </nav>
 </div>

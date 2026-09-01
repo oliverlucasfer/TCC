@@ -5,7 +5,6 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ValidatorField } from 'src/app/helpers/ValidatorField';
 import { UserUpdate } from 'src/app/models/identity/UserUpdate';
 import { AccountService } from 'src/app/services/account.service';
@@ -23,7 +22,6 @@ export class PerfilComponent implements OnInit {
   form!: UntypedFormGroup;
 
   constructor(
-    private router: Router,
     private fb: UntypedFormBuilder,
     private service: AccountService,
     private toastService: ToastService
@@ -81,10 +79,5 @@ export class PerfilComponent implements OnInit {
       () => this.toastService.success('Perfil atualizado com sucesso.'),
       (error: any) => this.toastService.error('Erro ao atualizar perfil. Tente novamente.')
     );
-  }
-
-  logout() {
-    this.service.logout();
-    this.router.navigate(['']);
   }
 }

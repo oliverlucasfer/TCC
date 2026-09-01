@@ -1,49 +1,87 @@
 .sidebar {
   background-color: var(--pd-surface);
   min-height: calc(100vh - var(--pd-header-h));
-  width: 200px;
-  box-shadow: var(--pd-shadow-sm);
+  width: 220px;
   z-index: 1;
   position: relative;
+  border-right: 1px solid var(--pd-border);
+  padding: 14px 10px;
+
+  &__secao {
+    display: block;
+    padding: 18px 14px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--pd-text-muted);
+  }
 
   &__menu {
-    padding-top: 15px;
     display: flex;
     flex-direction: column;
+    gap: 2px;
 
     &--item {
       display: flex;
-      padding: 12px 22px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--pd-text-muted);
       align-items: center;
       justify-content: space-between;
+      padding: 9px 14px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--pd-text-muted);
+      border-radius: var(--pd-radius-sm);
       cursor: pointer;
-      border-left: 3px solid transparent;
       transition: background-color var(--pd-transition), color var(--pd-transition);
-
-      img {
-        width: 12px;
-        margin-top: 2px;
-        filter: invert(60%) sepia(8%) saturate(300%) hue-rotate(180deg);
-      }
 
       &:hover {
         background-color: var(--pd-surface-alt);
         color: var(--pd-text);
       }
 
+      &--principal {
+        svg { flex-shrink: 0; }
+      }
+
       &--active {
         background-color: var(--pd-primary-soft);
-        border-left-color: var(--pd-primary);
         color: var(--pd-primary);
+        font-weight: 600;
 
-        img {
-          filter: invert(48%) sepia(85%) saturate(1600%) hue-rotate(196deg);
-        }
+        &:hover { background-color: var(--pd-primary-soft); }
       }
+    }
+  }
+
+  &__menu--rotulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__ponto {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    min-width: 22px;
+    text-align: center;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    background: var(--pd-surface-alt);
+    color: var(--pd-text-muted);
+
+    .sidebar__menu--item--active & {
+      background: var(--pd-primary);
+      color: #fff;
     }
   }
 }
@@ -59,7 +97,7 @@
     transition: transform 0.25s ease;
     z-index: 40;
     box-shadow: var(--pd-shadow-lg);
-    width: 230px;
+    width: 250px;
 
     &--mobile-open {
       transform: translateX(0);

@@ -102,6 +102,14 @@ namespace Api.Controllers
             return File(stream, "application/pdf", nomeSeguro);
         }
 
+        [HttpGet("contagem")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> Contagem()
+        {
+            var contagem = await _documentoService.ContagemPorCategoriaAsync();
+            return Ok(contagem);
+        }
+
         [HttpGet("categoria")]
         public async Task<IActionResult> GetByCategoria([FromQuery] Categoria categoria, [FromQuery] PageParams pageParams)
         {
