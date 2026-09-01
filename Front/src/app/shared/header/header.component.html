@@ -1,6 +1,6 @@
 <header class="header" [class.header--scrolled]="rolou">
   <div class="header__container">
-    <button class="header__hamburger" type="button" aria-label="Abrir menu" (click)="ui.toggleMenu()">
+    <button class="header__hamburger" type="button" aria-label="Abrir menu" [attr.aria-expanded]="menuAberto" (click)="ui.toggleMenu()">
       <span></span><span></span><span></span>
     </button>
 

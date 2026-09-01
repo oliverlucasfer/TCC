@@ -1,13 +1,6 @@
-.backdrop-mobile {
-  display: none;
-}
-
-@media (max-width: 900px) {
-  .backdrop-mobile {
-    display: block;
-    position: fixed;
-    inset: var(--pd-header-h) 0 0 0;
-    background: rgba(10, 14, 20, 0.45);
-    z-index: 35;
-  }
+.backdrop {
+  position: fixed;
+  inset: var(--pd-header-h) 0 0 0;
+  background: rgba(10, 14, 20, 0.45);
+  z-index: 35;
 }

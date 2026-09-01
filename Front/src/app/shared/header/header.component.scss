@@ -74,7 +74,7 @@
   }
 
   &__hamburger {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
@@ -85,6 +85,7 @@
     border-radius: var(--pd-radius-sm);
     background: transparent;
     cursor: pointer;
+    color: var(--pd-text);
 
     span {
       display: block;
@@ -195,10 +196,6 @@
 
 @media (max-width: 900px) {
   .header {
-    &__hamburger {
-      display: flex;
-    }
-
     &__logo {
       height: 26px;
     }
