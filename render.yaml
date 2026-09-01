@@ -11,6 +11,10 @@ services:
         sync: false
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
+      # Render free tier tem limite de inotify por UID; polling evita o crash
+      # "configured user limit (128) on the number of inotify instances"
+      - key: DOTNET_USE_POLLING_FILE_WATCHER
+        value: "true"
       - key: ConnectionStrings__Default
         value: Data Source=Api.db
       - key: Cors__AllowedOrigins__0

@@ -25,6 +25,8 @@ WORKDIR /app
 
 ENV ASPNETCORE_URLS=http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
+# Evita esgotar inotify (limite baixo no Render free tier)
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
 
 COPY --from=backend /app/out ./
 COPY --from=frontend /front/dist/Client ./wwwroot
