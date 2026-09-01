@@ -47,6 +47,10 @@ const routes: Routes = [
     component: CriarEditarComponent,
     canActivate: [AuthGuard],
   },
+  {
+    path: '**',
+    redirectTo: 'lista',
+  },
 ];
 
 @NgModule({

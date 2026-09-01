@@ -1,55 +1,51 @@
-using System.Text;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Api.Application.Contratos;
-using Api.Application.Dtos;
+using Api.Application.Models;
 using Api.Domain.Identity;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Api.Application
 {
     public class TokenService : ITokenService
     {
-        private readonly IConfiguration _config;
-        private readonly UserManager<User> _userManager;
-        private readonly IMapper _mapper;
+        private readonly JwtOptions _options;
         private readonly SymmetricSecurityKey _key;
 
-
-        public TokenService(IConfiguration config, UserManager<User> userManager, IMapper mapper)
+        public TokenService(IOptions<JwtOptions> options)
         {
-            _config = config;
-            _userManager = userManager;
-            _mapper = mapper;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
+            _options = options.Value;
+            if (string.IsNullOrEmpty(_options.TokenKey))
+                throw new InvalidOperationException(
+                    "TokenKey não configurada. Em Development use 'dotnet user-secrets set \"TokenKey\" \"<chave>\"'; em produção, defina a variável de ambiente TokenKey.");
+            if (Encoding.UTF8.GetBytes(_options.TokenKey).Length < 64)
+                throw new InvalidOperationException(
+                    "TokenKey muito curta. HS512 exige chave de pelo menos 64 bytes. Use: openssl rand -base64 48");
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.TokenKey));
         }
-        public async Task<string> CreateToken(UserUpdateDto userUpdateDto)
-        {
-            var user = _mapper.Map<User>(userUpdateDto);
 
+        public Task<string> CreateToken(User user)
+        {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new Claim(ClaimTypes.Role, user.Tipo.ToString())
             };
 
-            var roles = await _userManager.GetRolesAsync(user);
-
-            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+            var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
 
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Issuer = _options.Issuer,
+                Audience = _options.Audience,
+                Expires = DateTime.UtcNow.AddHours(_options.ExpirationHours),
                 SigningCredentials = creds
             };
 
@@ -57,7 +53,7 @@ namespace Api.Application
 
             var token = tokenHandler.CreateToken(tokenDescription);
 
-            return tokenHandler.WriteToken(token);
+            return Task.FromResult(tokenHandler.WriteToken(token));
         }
     }
 }

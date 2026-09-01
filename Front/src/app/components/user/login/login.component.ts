@@ -1,28 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserLogin } from 'src/app/models/identity/UserLogin';
 import { AccountService } from 'src/app/services/account.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   model = {} as UserLogin;
 
-  constructor(private accountService: AccountService, private router: Router) {}
+  constructor(
+    private accountService: AccountService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {}
 
   public login(): void {
     this.accountService.login(this.model).subscribe(
       () => {
-        this.router.navigateByUrl('');
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        this.router.navigateByUrl(returnUrl || '');
       },
       (error: any) => {
-        if (error.status == 401) console.log('usuário ou senha inválido');
-        else console.error(error);
+        if (error.status == 401) this.toastService.error('Usuário ou senha inválidos.');
+        else this.toastService.error('Erro ao entrar. Tente novamente.');
       }
     );
   }

@@ -34,7 +34,7 @@ export class AccountService {
       take(1),
       map((response: User) => {
         const user = response;
-        if (user) {
+        if (user && user.token) {
           this.setCurrentUser(user);
         }
       })
@@ -44,7 +44,44 @@ export class AccountService {
   public logout(): void {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
-    this.currentUserSource.complete();
+  }
+
+  public getToken(): string | null {
+    const stored = localStorage.getItem('user');
+    if (!stored) return null;
+    try {
+      const user = JSON.parse(stored) as User;
+      return user.token ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  public isLoggedIn(): boolean {
+    const user = this.currentUserValue();
+    return !!user && this.isTokenValid(user.token);
+  }
+
+  public currentUserValue(): User | null {
+    const stored = localStorage.getItem('user');
+    if (!stored) return null;
+    try {
+      return JSON.parse(stored) as User;
+    } catch {
+      return null;
+    }
+  }
+
+  private isTokenValid(token?: string): boolean {
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp;
+      if (!exp) return false;
+      return exp * 1000 > Date.now();
+    } catch {
+      return false;
+    }
   }
 
   public setCurrentUser(user: User): void {
@@ -57,7 +94,7 @@ export class AccountService {
   }
 
   updateUser(model: UserUpdate): Observable<void> {
-    return this.http.put<UserUpdate>(this.baseUrl + 'updateUser', model).pipe(
+    return this.http.post<UserUpdate>(this.baseUrl + 'UpdateUser', model).pipe(
       take(1),
       map((user: UserUpdate) => {
         this.setCurrentUser(user);

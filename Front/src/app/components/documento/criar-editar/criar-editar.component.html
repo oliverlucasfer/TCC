@@ -5,8 +5,8 @@
     <div>
       <form [formGroup]="form">
         <div class="p-3">
-          <div class="form-row">
-            <div class="form-group col-md-6">
+          <div class="row g-3">
+            <div class="`col-md-6 mb-3">
               <label class="pg-documentadd__info--label">Título</label>
               <input
                 type="text"
@@ -21,7 +21,7 @@
               <div class="invalid-feedback">Mínimo de 4 Caracteres</div>
               <div class="invalid-feedback">Máximo de 70 Caracteres</div>
             </div>
-            <div class="form-group col-md-6">
+            <div class="`col-md-6 mb-3">
               <label class="pg-documentadd__info--label">Autor(es)</label>
               <input
                 type="text"
@@ -37,8 +37,8 @@
               <div class="invalid-feedback">Máximo de 50 Caracteres</div>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
+          <div class="row g-3">
+            <div class="`col-md-6 mb-3">
               <label class="pg-documentadd__info--label">Área</label>
               <select
                 formControlName="area"
@@ -57,7 +57,7 @@
               </select>
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
-            <div class="form-group col-md-6">
+            <div class="`col-md-6 mb-3">
               <label class="pg-documentadd__info--label">Categoria</label>
               <select
                 formControlName="categoria"
@@ -77,8 +77,8 @@
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group col-md-6">
+          <div class="row g-3">
+            <div class="`col-md-6 mb-3">
               <label class="pg-documentadd__info--label">Palavras-Chave</label>
               <input
                 type="text"
@@ -88,7 +88,7 @@
               />
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
-            <div class="form-group col-md-6">
+            <div class="`col-md-6 mb-3">
               <label class="pg-documentadd__info--label"
                 >Ano de Publicação</label
               >
@@ -101,8 +101,8 @@
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group col-md-12">
+          <div class="row g-3">
+            <div class="`col-md-12 mb-3">
               <label class="pg-documentadd__info--label">Resumo</label>
               <textarea
                 formControlName="resumo"
@@ -112,8 +112,8 @@
               <div class="invalid-feedback">Campo Obrigatório</div>
             </div>
           </div>
-          <div class="form-row">
-            <div *ngIf="mostrar" class="form-group col-md-7">
+          <div class="row g-3">
+            <div *ngIf="mostrar" class="`col-md-7 mb-3">
               <label class="pg-documentadd__info--label">Documento</label>
               <input
                 readonly
@@ -133,7 +133,8 @@
               Cancelar Alteração
             </button>
             <button
-              ng
+              *ngIf="podeEditar"
+              type="button"
               class="pg-documentadd__button--delete btn"
               (click)="excluir()"
             >
@@ -159,7 +160,6 @@
           type="file"
           #file
           class="modal-upload__input form-control"
-          formControlName="documentoURL"
           placeholder=""
           (change)="onFileChange($event)"
         />
@@ -171,7 +171,6 @@
         <input
           type="file"
           #file
-          formControlName="documentoURL"
           class="modal-upload__input form-control"
           placeholder=""
           (change)="onFileChange($event)"

@@ -1,34 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControlOptions,
-  FormBuilder,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ValidatorField } from 'src/app/helpers/ValidatorField';
 import { UserUpdate } from 'src/app/models/identity/UserUpdate';
 import { AccountService } from 'src/app/services/account.service';
+import { ToastService } from 'src/app/services/toast.service';
+import { take } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-perfil',
-  templateUrl: './perfil.component.html',
-  styleUrls: ['./perfil.component.scss'],
+    selector: 'app-perfil',
+    templateUrl: './perfil.component.html',
+    styleUrls: ['./perfil.component.scss'],
+    standalone: false
 })
 export class PerfilComponent implements OnInit {
   userUpdate = {} as UserUpdate;
-  form!: FormGroup;
+  form!: UntypedFormGroup;
 
   constructor(
     private router: Router,
-    private fb: FormBuilder,
-    private service: AccountService
+    private fb: UntypedFormBuilder,
+    private service: AccountService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.validation();
     this.carregarUsuario();
-    console.log(localStorage.getItem('user'))
   }
 
   private validation(): void {
@@ -51,10 +54,16 @@ export class PerfilComponent implements OnInit {
   }
 
   carregarUsuario(): void {
-    // this.service.getUser().subscribe((userRetorno: UserUpdate) => {
-    //   this.userUpdate = userRetorno;
-    //   this.form.patchValue(this.userUpdate);
-    // });
+    this.service.currentUser$.pipe(take(1)).subscribe((user) => {
+      if (user) {
+        this.form.patchValue({
+          userName: user.userName,
+          primeiroNome: user.primeiroNome,
+          ultimoNome: user.ultimoNome,
+          email: user.email,
+        });
+      }
+    });
   }
 
   get f(): any {
@@ -68,7 +77,10 @@ export class PerfilComponent implements OnInit {
   public atualizarUsuario() {
     this.userUpdate = { ...this.form.value };
 
-    this.service.updateUser(this.userUpdate).subscribe();
+    this.service.updateUser(this.userUpdate).subscribe(
+      () => this.toastService.success('Perfil atualizado com sucesso.'),
+      (error: any) => this.toastService.error('Erro ao atualizar perfil. Tente novamente.')
+    );
   }
 
   logout() {

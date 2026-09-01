@@ -10,28 +10,6 @@
     h1 {
       margin-left: 20px;
     }
-    .btn-edit {
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      justify-content: space-between;
-      transition: background-color 0.2s;
-      margin-bottom: -9px;
-      &__name {
-        font-size: 14px;
-        margin-right: 10px;
-      }
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-      img {
-        margin-bottom: 5px;
-      }
-    }
   }
   &__container {
     display: flex;

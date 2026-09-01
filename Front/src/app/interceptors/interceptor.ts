@@ -1,35 +1,35 @@
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-} from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { User } from '../models/identity/User';
+import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { AccountService } from '../services/account.service';
 
-@Injectable()
-export class Interceptor implements HttpInterceptor {
-  constructor(private accountService: AccountService) {}
-  intercept(
-    request: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
-    let currentUser: User;
+export const authInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
+  const accountService = inject(AccountService);
+  const router = inject(Router);
 
-    this.accountService.currentUser$.pipe(take(1)).subscribe((user) => {
-      currentUser = user;
+  const token = accountService.getToken();
 
-      if (currentUser) {
-        request = request.clone({
-          setHeaders: {
-            Authorization: `Bearer ${currentUser.token}`,
-          },
-        });
-      }
+  let request = req;
+  if (token) {
+    request = req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` },
     });
-    return next.handle(request);
   }
-}
+
+  return next(request).pipe(
+    catchError((error) => {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        accountService.logout();
+        if (!router.url.startsWith('/user/login')) {
+          router.navigate(['/user/login']);
+        }
+      }
+      return throwError(() => error);
+    })
+  );
+};
