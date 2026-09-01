@@ -4,7 +4,8 @@ using Api.Application.Contratos;
 using Api.Domain.Identity;
 using Api.Persistence;
 using Api.Persistence.Contexto;
-using Api.Persistence.Contratos;
+using Api.Infrastructure;
+using Api.Application.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,11 +16,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 
 namespace Api
@@ -36,10 +36,26 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Front", policy =>
+                    policy.WithOrigins(Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:4200" })
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+            });
             services.AddDbContext<ApiContext>(
                 context => context.UseSqlite(Configuration.GetConnectionString("Default"))
             );
+
+            var jwtSection = Configuration.GetSection(JwtOptions.SectionName);
+            services.Configure<JwtOptions>(jwtSection);
+            var jwtOptions = jwtSection.Get<JwtOptions>() ?? new JwtOptions();
+            if (string.IsNullOrEmpty(jwtOptions.TokenKey))
+                throw new InvalidOperationException(
+                    "TokenKey não configurada. Em Development use 'dotnet user-secrets set \"TokenKey\" \"<chave>\"'; em produção, defina a variável de ambiente TokenKey.");
+            if (Encoding.UTF8.GetBytes(jwtOptions.TokenKey).Length < 64)
+                throw new InvalidOperationException(
+                    "TokenKey muito curta. HS512 exige chave de pelo menos 64 bytes. Use: openssl rand -base64 48");
 
             services.AddIdentityCore<User>(options =>
             {
@@ -62,23 +78,26 @@ namespace Api
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
                             ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"])),
-                            ValidateIssuer = false,
-                            ValidateAudience = false
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.TokenKey)),
+                            ValidateIssuer = true,
+                            ValidIssuer = jwtOptions.Issuer,
+                            ValidateAudience = true,
+                            ValidAudience = jwtOptions.Audience,
+                            ValidAlgorithms = new[] { SecurityAlgorithms.HmacSha512 },
+                            ClockSkew = TimeSpan.FromMinutes(1)
                         };
                     });
 
-            services.AddControllers()
-                .AddJsonOptions(options =>
-                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
-                .AddNewtonsoftJson(options =>
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddControllers();
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddHealthChecks();
+            services.AddHostedService<DbInitializer>();
 
             services.AddScoped<IDocumentoService, DocumentoService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IFileService, DocumentoFileService>();
+            services.AddScoped<IBackupService, BackupService>();
 
             services.AddScoped<IGeralPersistence, GeralPersistence>();
             services.AddScoped<IDocumentoPersistence, DocumentoPersistence>();
@@ -97,20 +116,10 @@ namespace Api
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 });
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
                 {
                     {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header
-                        },
+                        new OpenApiSecuritySchemeReference("Bearer", document),
                         new List<string>()
                     }
                 });
@@ -127,25 +136,41 @@ namespace Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
             }
 
-            //app.UseHttpsRedirection();
+            app.Use(async (context, next) =>
+            {
+                var headers = context.Response.Headers;
+                headers["X-Content-Type-Options"] = "nosniff";
+                headers["X-Frame-Options"] = "DENY";
+                headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+                headers["Content-Security-Policy"] = "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:";
+                if (!env.IsDevelopment())
+                {
+                    headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains";
+                }
+                await next();
+            });
+
+            if (!env.IsDevelopment())
+            {
+                app.UseDefaultFiles();
+                app.UseStaticFiles();
+            }
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCors("Front");
+
             app.UseAuthentication();
-
-            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), "Resources")),
-                RequestPath = new PathString("/Resources")
-            });
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/api/health");
+                if (!env.IsDevelopment())
+                {
+                    endpoints.MapFallbackToFile("index.html");
+                }
             });
         }
     }

@@ -1,7 +1,11 @@
 <div class="page">
   <div class="pg-busca__header">
     <h1>Documentos</h1>
-    <button *ngIf="tipo !== 0" (click)="redirectTo()" class="btn-edit">
+    <button *ngIf="podeBackup" (click)="baixarBackup()" class="btn-edit" style="margin-right: 8px">
+      <strong class="btn-edit__name">Backup</strong>
+      <img class="btn-edit__icon" src="../../assets/icons/down.svg" alt="" />
+    </button>
+    <button *ngIf="podeEditar" (click)="redirectTo()" class="btn-edit">
       <strong class="btn-edit__name">Cadastrar Novo</strong>
       <img class="btn-edit__icon" src="../../assets/icons/edit.svg" alt="" />
     </button>
@@ -83,42 +87,25 @@
       </div>
       <div class="filter-modal__line">
         <h4>Área</h4>
-        <select class="filter-modal__select-area" name="select-area">
-          <option value="0">Engenharia</option>
-          <option value="1">Saúde</option>
-          <option value="2">Direito</option>
-          <option value="3">Robótica</option>
-          <option value="4">Administração</option>
-          <option value="5">Contabilidade</option>
-          <option value="6">Programação</option>
+        <select
+          class="filter-modal__select-area"
+          name="select-area"
+          [(ngModel)]="filtroArea"
+        >
+          <option value="">Todas</option>
+          <option *ngFor="let area of areas; let i = index" [value]="i.toString()">{{ area }}</option>
         </select>
       </div>
       <div class="filter-modal__line">
         <h4>Ano de Publicação</h4>
         <div class="date-filter">
-          <select class="date-filter__select" name="select-date">
-            <option value="2001">2001</option>
-            <option value="2002">2002</option>
-            <option value="2003">2003</option>
-            <option value="2004">2004</option>
-            <option value="2005">2005</option>
-            <option value="2006">2006</option>
-            <option value="2007">2007</option>
-            <option value="2008">2008</option>
-            <option value="2009">2009</option>
-            <option value="2010">2010</option>
-            <option value="2011">2011</option>
-            <option value="2012">2012</option>
-            <option value="2013">2013</option>
-            <option value="2014">2014</option>
-            <option value="2015">2015</option>
-            <option value="2016">2016</option>
-            <option value="2017">2017</option>
-            <option value="2018">2018</option>
-            <option value="2019">2019</option>
-            <option value="2020">2020</option>
-            <option value="2021">2021</option>
-            <option value="2022">2022</option>
+          <select
+            class="date-filter__select"
+            name="select-date"
+            [(ngModel)]="filtroAno"
+          >
+            <option value="">Todos</option>
+            <option *ngFor="let a of anos" [value]="a.toString()">{{ a }}</option>
           </select>
         </div>
       </div>

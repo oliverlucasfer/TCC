@@ -3,8 +3,8 @@
     <div>
       <h2 style="margin-bottom: 20px">Cadastro de Usuário</h2>
     </div>
-    <div class="form-row" style="width: 100%">
-      <div class="form-group col-sm-6">
+    <div class="row g-3" style="width: 100%">
+      <div class="`col-sm-6 mb-3">
         <label>Primeiro Nome</label>
         <input
           type="text"
@@ -17,7 +17,7 @@
         />
         <div class="invalid-feedback">Primeiro Nome é obrigatório.</div>
       </div>
-      <div class="form-group col-sm-6">
+      <div class="`col-sm-6 mb-3">
         <label>Último nome</label>
         <input
           type="text"
@@ -31,7 +31,7 @@
         <div class="invalid-feedback">Último Nome é obrigatório.</div>
       </div>
     </div>
-    <div class="pg-cadastro__info form-group">
+    <div class="pg-cadastro__info mb-3">
       <label for="">Email:</label>
       <input
         class="pg-cadastro__info--input form-control"
@@ -53,7 +53,7 @@
         Deve ser um e-mail válido.
       </div>
     </div>
-    <div class="pg-cadastro__info form-group" style="width: 100%">
+    <div class="pg-cadastro__info mb-3" style="width: 100%">
       <label for="">Usuario:</label>
       <input
         class="pg-cadastro__info--input form-control"
@@ -64,8 +64,8 @@
       />
       <div class="invalid-feedback">Usuário é obrigatório.</div>
     </div>
-    <div class="form-row" style="width: 100%">
-      <div class="form-group col-sm-6">
+    <div class="row g-3" style="width: 100%">
+      <div class="`col-sm-6 mb-3">
         <label for="">Senha:</label>
         <input
           class="pg-cadastro__info--input form-control"
@@ -89,7 +89,7 @@
           Deve conter no mínimo 6 caracteres.
         </div>
       </div>
-      <div class="form-group col-sm-6">
+      <div class="`col-sm-6 mb-3">
         <label for="">Confirmar Senha:</label>
         <input
           class="pg-cadastro__info--input form-control"
@@ -115,8 +115,8 @@
         </div>
       </div>
     </div>
-    <div class="form-row" style="width: 100%">
-      <div class="form-group col-12">
+    <div class="row g-3" style="width: 100%">
+      <div class="`col-12 mb-3">
         <button
           [disabled]="!form.valid"
           class="pg-cadastro__button btn btn-lg btn-success btn-block px-5"
@@ -126,8 +126,8 @@
         </button>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group col-12">
+    <div class="row g-3">
+      <div class="`col-12 mb-3">
         <a class="pg-cadastro__link" routerLink="/user/login">
           Já sou Cadastrado
         </a>

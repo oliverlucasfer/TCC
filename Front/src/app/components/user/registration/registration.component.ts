@@ -1,28 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControlOptions,
-  FormBuilder,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ValidatorField } from 'src/app/helpers/ValidatorField';
 import { User } from 'src/app/models/identity/User';
 import { AccountService } from 'src/app/services/account.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
-  selector: 'app-registration',
-  templateUrl: './registration.component.html',
-  styleUrls: ['./registration.component.scss'],
+    selector: 'app-registration',
+    templateUrl: './registration.component.html',
+    styleUrls: ['./registration.component.scss'],
+    standalone: false
 })
 export class RegistrationComponent implements OnInit {
   user = {} as User;
-  form!: FormGroup;
+  form!: UntypedFormGroup;
 
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     private accountService: AccountService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   get f(): any {
@@ -54,8 +57,11 @@ export class RegistrationComponent implements OnInit {
   register(): void {
     this.user = { ...this.form.value };
     this.accountService.register(this.user).subscribe(
-      () => this.router.navigateByUrl(''),
-      (error: any) => console.log(error.error)
+      () => {
+        this.toastService.success('Conta criada com sucesso.');
+        this.router.navigateByUrl('');
+      },
+      (error: any) => this.toastService.error('Erro ao criar conta. Tente novamente.')
     );
   }
 }

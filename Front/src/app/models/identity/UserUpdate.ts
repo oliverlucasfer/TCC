@@ -1,4 +1,5 @@
 export class UserUpdate {
+  id: number;
   userName: string;
   primeiroNome: string;
   ultimoNome: string;

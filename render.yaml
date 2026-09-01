@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: prodocs
+    runtime: docker
+    plan: free
+    rootDir: .
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: TokenKey
+        sync: false
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__Default
+        value: Data Source=/data/Api.db
+      - key: DATA_DIR
+        value: /data
+      - key: Cors__AllowedOrigins__0
+        value: https://prodocs.onrender.com
+      - key: SeedAdminUser
+        sync: false
+      - key: SeedAdminPass
+        sync: false
+      - key: SeedAdminEmail
+        sync: false
+    disk:
+      name: prodocs-data
+      mountPath: /data
+      sizeGB: 1

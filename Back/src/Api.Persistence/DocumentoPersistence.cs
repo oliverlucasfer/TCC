@@ -2,10 +2,10 @@ using Api.Domain;
 using System.Linq;
 using Api.Domain.Enums;
 using System.Threading.Tasks;
-using Api.Persistence.Contratos;
+using Api.Application.Contratos;
 using Microsoft.EntityFrameworkCore;
 using Api.Persistence.Contexto;
-using Api.Persistence.Models;
+using Api.Application.Models;
 using System;
 using System.Collections.Generic;
 
@@ -23,21 +23,21 @@ namespace Api.Persistence
 
         public async Task<PageList<Documento>> GetAllDocumentosAsync(PageParams pageParams)
         {
-            IQueryable<Documento> query = _context.Documentos;
-            if (pageParams.Categoria != null) query = query.AsNoTracking().Where(d => ((int)d.Categoria) == pageParams.Categoria);
-            query = query.AsNoTracking().OrderBy(d => d.Id);
+            IQueryable<Documento> query = _context.Documentos.AsNoTracking();
+            if (pageParams.Categoria != null) query = query.Where(d => ((int)d.Categoria) == pageParams.Categoria);
 
-            var list = new List<Documento>();
-
-            query.ToList().ForEach(d =>
+            if (!string.IsNullOrWhiteSpace(pageParams.Term))
             {
-                if (BuscarFrase(pageParams.Term, d.DocumentoText, 3, 0.75))
-                {
-                    list.Add(d);
-                }
-            });
+                var termoFts = pageParams.Term.Trim().Replace("'", "''");
+                var idsMatch = await _context.Database
+                    .SqlQuery<int>($"SELECT Id FROM DocumentoFts WHERE DocumentoFts MATCH {termoFts}")
+                    .ToListAsync();
+                query = query.Where(d => idsMatch.Contains(d.Id));
+            }
 
-            return await PageList<Documento>.CreateAsync(list, pageParams.PageNumber, pageParams.pageSize);
+            query = query.OrderBy(d => d.Id);
+
+            return await PageList<Documento>.CreateAsync(query.ToList(), pageParams.PageNumber, pageParams.PageSize);
         }
 
         public async Task<Documento> GetDocumentoByIdAsync(int DocumentoId)
@@ -47,78 +47,38 @@ namespace Api.Persistence
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<PageList<Documento>> GetAllDocumentosByCategoriaAsync(Categoria categoria, PageParams pageParams)
-        {
-            IQueryable<Documento> query = _context.Documentos;
-            query = query.AsNoTracking().OrderBy(d => d.Id).Where(
-                d => d.Area.ToLower().Contains(pageParams.Term.ToLower())
-                || d.PalavrasChave.ToLower().Contains(pageParams.Term.ToLower())
-                || d.Titulo.ToLower().Contains(pageParams.Term.ToLower())
-                || d.Autor.ToLower().Contains(pageParams.Term.ToLower())
-                || d.Resumo.ToLower().Contains(pageParams.Term.ToLower())
-                && d.Categoria.ToString() == "0")
-                .OrderBy(d => d.Id);
-            return await PageList<Documento>.CreateAsync(query.ToList(), pageParams.PageNumber, pageParams.pageSize);
-        }
+        public async Task<PageList<Documento>> GetAllDocumentosByCategoriaAsync(Categoria categoria, PageParams pageParams)        {
+            IQueryable<Documento> query = _context.Documentos.AsNoTracking();
 
+            query = query.Where(d => d.Categoria == categoria);
 
-        public Boolean BuscarFrase(string frase, string pdf, int toleracia, double precisao)
-        {
-            char[] delimiterChars = { ' ', ',', '.', ':', '\t' };
-            string[] source = pdf.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
-            string text = frase.ToLower();
-            string[] words = text.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
-            bool[] wordChecked = new bool[words.Length];
-            int fraseindex = 0;
-
-            bool flag = false;
-            int tol = toleracia;
-
-            foreach (var wordpdf in source)
+            if (!string.IsNullOrWhiteSpace(pageParams.Term))
             {
-                fraseindex = 0;
-                flag = false;
-                foreach (var word in words)
-                {
-                    if (wordpdf.Contains(word, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        wordChecked[fraseindex] = true;
-                        flag = true;
-                        tol = toleracia;
-                    }
-                    fraseindex++;
-                }
-
-                if (!flag)
-                {
-                    tol--;
-                }
-                if (tol == 0)
-                {
-                    for (int i = 0; i < words.Length; i++)
-                    {
-                        wordChecked[i] = false;
-                    }
-                }
-
-                bool allcheck = true;
-                int checkcount = 0;
-                foreach (var check in wordChecked)
-                {
-                    allcheck = allcheck && check;
-                    if (check)
-                    {
-                        checkcount++;
-                    }
-                }
-                if (allcheck || (checkcount >= Math.Ceiling(precisao * words.Length)))
-                {
-                    return true;
-                }
+                var termo = pageParams.Term.ToLower();
+                query = query.Where(d =>
+                    d.Area.ToLower().Contains(termo)
+                    || d.PalavrasChave.ToLower().Contains(termo)
+                    || d.Titulo.ToLower().Contains(termo)
+                    || d.Autor.ToLower().Contains(termo)
+                    || d.Resumo.ToLower().Contains(termo));
             }
 
-            return false;
+            query = query.OrderBy(d => d.Id);
+
+            return await PageList<Documento>.CreateAsync(query.ToList(), pageParams.PageNumber, pageParams.PageSize);
         }
 
+
+        public async Task<PageList<Documento>> GetDocumentosByFiltroAsync(PageParams pageParams)
+        {
+            IQueryable<Documento> query = _context.Documentos.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(pageParams.Ano)) query = query.Where(d => d.Ano.Contains(pageParams.Ano));
+            if (!string.IsNullOrWhiteSpace(pageParams.Area)) query = query.Where(d => d.Area.Contains(pageParams.Area));
+
+            query = query.OrderBy(d => d.Id);
+
+            return await PageList<Documento>.CreateAsync(query.ToList(), pageParams.PageNumber, pageParams.PageSize);
+        }
     }
 }

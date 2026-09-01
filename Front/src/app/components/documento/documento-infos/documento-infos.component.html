@@ -7,7 +7,7 @@
         /></a>
         <h1>{{ documento.titulo }}</h1>
       </div>
-      <button *ngIf="tipo" (click)="redirectTo(documento.id)" class="btn-edit">
+      <button *ngIf="podeEditar" (click)="redirectTo(documento.id)" class="btn-edit">
         <strong class="btn-edit__name">Editar</strong>
         <img class="btn-edit__icon" src="../../assets/icons/edit.svg" alt="" />
       </button>
@@ -32,9 +32,10 @@
         <p class="pg-document__info--data">{{ documento.ano }}</p>
         <br />
         <a
-          href="../../assets/{{ documentoURL }}"
+          [href]="downloadUrl"
           class="pg-document__info--button"
-          download="{{ documentoURL }}"
+          target="_blank"
+          rel="noopener"
         >
           Baixar PDF<img src="../../assets/icons/btn-download.svg" alt="" />
         </a>

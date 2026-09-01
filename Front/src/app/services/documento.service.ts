@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { take, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Documento } from '../models/Documento';
 import { PaginatedResult } from '../models/Pagination';
 
@@ -9,16 +10,45 @@ import { PaginatedResult } from '../models/Pagination';
   providedIn: 'root',
 })
 export class DocumentoService {
-  baseURL = 'http://localhost:5000/api/documentos';
+  baseURL = environment.apiURL + 'api/documentos';
 
   constructor(private http: HttpClient) {}
 
-  public getDocumento() {
-    return this.http.get<Documento>(`${this.baseURL}/pdf`);
-  }
+  public getFiltro(
+    area: string,
+    ano: string,
+    page?: number,
+    itemsPerPage?: number
+  ): Observable<PaginatedResult<Documento[]>> {
+    const paginatedResult: PaginatedResult<Documento[]> = new PaginatedResult<
+      Documento[]
+    >();
 
-  public getFiltro(area: string, ano: string) {
-    return this.http.get<Documento[]>(`${this.baseURL}/filtro`);
+    let params = new HttpParams();
+    if (area) params = params.append('area', area);
+    if (ano) params = params.append('ano', ano);
+    if (page != null && itemsPerPage != null) {
+      params = params.append('pageNumber', page.toString());
+      params = params.append('pageSize', itemsPerPage.toString());
+    }
+
+    return this.http
+      .get<Documento[]>(`${this.baseURL}/filtro`, {
+        observe: 'response',
+        params,
+      })
+      .pipe(
+        take(1),
+        map((response) => {
+          paginatedResult.result = response.body;
+          if (response.headers.has('Pagination')) {
+            paginatedResult.pagination = JSON.parse(
+              response.headers.get('Pagination')
+            );
+          }
+          return paginatedResult;
+        })
+      );
   }
 
   public getDocumentos(
@@ -123,5 +153,11 @@ export class DocumentoService {
 
   public deleteDocumento(id: number): Observable<any> {
     return this.http.delete(`${this.baseURL}/${id}`);
+  }
+
+  public getBackup(): Observable<Blob> {
+    return this.http.get<Blob>(`${this.baseURL}/backup`, {
+      responseType: 'blob' as 'json',
+    });
   }
 }

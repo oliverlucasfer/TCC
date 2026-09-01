@@ -1,1 +1,26 @@
+# VS Code
 /.vscode
+
+# Backend (.NET)
+Back/src/**/bin/
+Back/src/**/obj/
+Back/src/Api/Api.db
+Back/src/Api/Api.db-shm
+Back/src/Api/Api.db-wal
+Back/src/Api/Resources/
+Back/src/Api/appsettings.Production.json
+
+# Frontend (Angular)
+Front/node_modules/
+Front/dist/
+Front/.angular/
+
+# Ambiente / segredos
+.env
+*.user
+
+# Sistema
+Thumbs.db
+.DS_Store
+# Playwright MCP (artefatos de teste)
+.playwright-mcp/

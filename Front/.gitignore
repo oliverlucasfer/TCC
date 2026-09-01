@@ -43,3 +43,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# PDFs locais (nao versionar)
+src/assets/*.pdf
+

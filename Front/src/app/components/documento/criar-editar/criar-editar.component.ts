@@ -1,44 +1,54 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentoService } from 'src/app/services/documento.service';
 import { areas, Documento } from 'src/app/models/Documento';
 import { environment } from 'src/environments/environment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AccountService } from 'src/app/services/account.service';
+import { ToastService } from 'src/app/services/toast.service';
+import { take } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-criar-editar',
-  templateUrl: './criar-editar.component.html',
-  styleUrls: ['./criar-editar.component.scss'],
+    selector: 'app-criar-editar',
+    templateUrl: './criar-editar.component.html',
+    styleUrls: ['./criar-editar.component.scss'],
+    standalone: false
 })
 export class CriarEditarComponent implements OnInit {
   documento = {} as Documento;
   documentoId!: number;
   documentoURL!: string;
-  form!: FormGroup;
+  form!: UntypedFormGroup;
   estadoSalvar = 'post';
   file!: File;
   mostrar = false;
   change = false;
   modalRef?: BsModalRef;
   areas = areas;
+  podeEditar = false;
 
   get f(): any {
     return this.form.controls;
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private activatedRouter: ActivatedRoute,
     private router: Router,
     private documentoService: DocumentoService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private accountService: AccountService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.carregarDocumento();
     this.validation();
+    this.accountService.currentUser$.pipe(take(1)).subscribe((user) => {
+      const tipo = user ? user.tipo : undefined;
+      this.podeEditar = tipo === 'Administrador';
+    });
   }
 
   setChange() {
@@ -46,9 +56,9 @@ export class CriarEditarComponent implements OnInit {
   }
 
   public carregarDocumento() {
-    this.documentoId = +this.activatedRouter.snapshot.paramMap.get('id');
+    this.documentoId = Number(this.activatedRouter.snapshot.paramMap.get('id'));
 
-    if (this.documentoId !== null && this.documentoId !== 0) {
+    if (this.documentoId > 0) {
       this.estadoSalvar = 'put';
       this.mostrar = true;
 
@@ -64,7 +74,7 @@ export class CriarEditarComponent implements OnInit {
           }
         },
         (error: any) => {
-          console.error(error);
+          this.toastService.error('Erro ao carregar documento.');
         }
       );
     }
@@ -103,16 +113,17 @@ export class CriarEditarComponent implements OnInit {
 
   public salvarAlteracao(event: any, template: TemplateRef<any>): void {
     if (this.estadoSalvar == 'post') {
-      this.documento = { ...this.form.value };
+      this.documento = { ...this.form.value, categoria: Number(this.form.value.categoria) };
       this.documentoService.postDocumento(this.documento).subscribe(
-        () => {
+        (documento: Documento) => {
+          this.documentoId = documento.id;
           event.stopPropagation();
           this.modalRef = this.modalService.show(template, {
             class: 'modal-sm',
           });
         },
         (error: any) => {
-          console.error(error);
+          this.toastService.error('Erro ao criar documento.');
         }
       );
     } else {
@@ -120,6 +131,7 @@ export class CriarEditarComponent implements OnInit {
         id: this.documento.id,
         documentoText: this.documento.documentoText,
         ...this.form.value,
+        categoria: Number(this.form.value.categoria),
       };
       this.documentoService
         .putDocumento(this.documento.id, this.documento)
@@ -131,7 +143,7 @@ export class CriarEditarComponent implements OnInit {
             });
           },
           (error: any) => {
-            console.error(error);
+            this.toastService.error('Erro ao atualizar documento.');
           }
         );
     }
@@ -139,30 +151,15 @@ export class CriarEditarComponent implements OnInit {
 
   onFileChange(ev: any): void {
     const reader = new FileReader();
-    if (this.estadoSalvar == 'post') {
-      this.documentoService.getDocumento().subscribe((d) => {
-        reader.onload = (event: any) =>
-          (this.documentoURL = event.target.result);
+    reader.onload = (event: any) => (this.documentoURL = event.target.result);
 
-        this.file = ev.target.files;
-        reader.readAsDataURL(this.file[0]);
+    this.file = ev.target.files;
+    reader.readAsDataURL(this.file[0]);
 
-        this.uploadDocumento(d.id);
-      });
-    } else {
-      reader.onload = (event: any) => (this.documentoURL = event.target.result);
-
-      this.file = ev.target.files;
-      reader.readAsDataURL(this.file[0]);
-
-      this.uploadDocumento();
-    }
+    this.uploadDocumento();
   }
 
-  uploadDocumento(id?: number): void {
-    if (this.estadoSalvar == 'post') {
-      this.documentoId = id;
-    }
+  uploadDocumento(): void {
     this.documentoService.postUpload(this.documentoId, this.file).subscribe(
       () => {
         this.carregarDocumento();
@@ -170,7 +167,7 @@ export class CriarEditarComponent implements OnInit {
         this.router.navigate(['lista']);
       },
       (error: any) => {
-        console.error(error);
+        this.toastService.error('Erro no upload do arquivo.');
       }
     );
   }
@@ -183,9 +180,10 @@ export class CriarEditarComponent implements OnInit {
   excluir() {
     this.documentoService.deleteDocumento(this.documentoId).subscribe(
       (result: any) => {
+        this.toastService.success('Documento excluído.');
         this.router.navigate(['lista']);
       },
-      (error) => console.log(error)
+      (error) => this.toastService.error('Erro ao excluir documento.')
     );
   }
 }

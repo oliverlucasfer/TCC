@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
+using Api.Application.Contratos;
 using Api.Persistence.Contexto;
-using Api.Persistence.Contratos;
 
 namespace Api.Persistence
 {

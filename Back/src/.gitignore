@@ -452,3 +452,9 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Dados locais (banco e PDFs servidos em /Resources)
+*.db
+Api/Resources/pdfs/*
+!Api/Resources/pdfs/.gitkeep
+

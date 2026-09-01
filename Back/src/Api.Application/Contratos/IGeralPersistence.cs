@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Api.Persistence.Contratos
+namespace Api.Application.Contratos
 {
     public interface IGeralPersistence
     {

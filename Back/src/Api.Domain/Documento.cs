@@ -11,6 +11,7 @@ namespace Api.Domain
         public string Ano { get; set; }
         public string DocumentoURL { get; set; } = "";
         public string DocumentoText { get; set; } = "";
+        public string NomeOriginal { get; set; } = "";
         public Categoria Categoria { get; set; }
         public string PalavrasChave { get; set; }
         public string Resumo { get; set; }
