@@ -23,6 +23,8 @@ export class ThemeService {
   }
 
   private apply(): void {
-    document.body.setAttribute('data-bs-theme', this.dark ? 'dark' : 'light');
+    const el = document.documentElement;
+    el.setAttribute('data-bs-theme', this.dark ? 'dark' : 'light');
+    el.style.colorScheme = this.dark ? 'dark' : 'light';
   }
 }

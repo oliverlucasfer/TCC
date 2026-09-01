@@ -87,15 +87,8 @@ label { margin: 0; }
   padding: 32px 40px;
 }
 
-.main {
-  width: 100% !important;
-  display: flex;
-  min-height: calc(100vh - var(--pd-header-h));
-}
-
 .main__conteudo {
-  flex: 1;
-  min-width: 0;
+  min-height: calc(100vh - var(--pd-header-h));
 }
 
 @media (max-width: 900px) {
