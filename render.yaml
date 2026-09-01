@@ -7,14 +7,12 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
     envVars:
-      - key: TokenKey
+      - key: Jwt__TokenKey
         sync: false
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__Default
-        value: Data Source=/data/Api.db
-      - key: DATA_DIR
-        value: /data
+        value: Data Source=Api.db
       - key: Cors__AllowedOrigins__0
         value: https://prodocs.onrender.com
       - key: SeedAdminUser
@@ -23,7 +21,3 @@ services:
         sync: false
       - key: SeedAdminEmail
         sync: false
-    disk:
-      name: prodocs-data
-      mountPath: /data
-      sizeGB: 1

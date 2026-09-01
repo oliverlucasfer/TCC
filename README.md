@@ -144,12 +144,10 @@ O projeto inclui `Dockerfile` (3 estágios) e `render.yaml` (Blueprint). A API s
 | `SeedAdminUser` | Usuário do admin inicial (auto-criado no boot) |
 | `SeedAdminPass` | Senha do admin inicial |
 | `SeedAdminEmail` | E-mail do admin inicial (opcional) |
-| `ConnectionStrings__Default` | `Data Source=/data/Api.db` (já definido no `render.yaml`) |
-| `DATA_DIR` | `/data` (volume) — onde ficam o SQLite e os PDFs |
-
-4. O `render.yaml` já monta um **volume persistente** de 1 GB em `/data` (SQLite + PDFs sobrevivem a redeploys).
 
 Se `SeedAdminUser`/`SeedAdminPass` não forem definidos, o seed é pulado.
+
+> **Dados efêmeros no free tier**: o plano gratuito do Render não suporta discos persistentes — o SQLite (`Api.db`) e os PDFs em `Resources/pdfs` **são apagados** quando o serviço dorme (15 min de inatividade) ou é reimplantado. Em cada boot o `DbInitializer` recria o schema, o índice FTS5 e o admin de seed, então a aplicação volta a funcionar — apenas os documentos cadastrados são perdidos. Para persistência real, use o plano **Starter** (adiando `disk: mountPath: /data` de volta ao `render.yaml` + `ConnectionStrings__Default=Data Source=/data/Api.db` + `DATA_DIR=/data` — o código já suporta).
 
 ## CI
 

@@ -29,7 +29,7 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 COPY --from=backend /app/out ./
 COPY --from=frontend /front/dist/Client ./wwwroot
 
-RUN mkdir -p /data/Resources/pdfs
+RUN mkdir -p Resources/pdfs
 
 EXPOSE 8080
 
